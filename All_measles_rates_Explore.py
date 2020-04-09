@@ -97,19 +97,7 @@ overall_mean = overall_mean.round()
 print(overall_mean.sort_values(by='mean_overall_rate', ascending=False))
 print('\n')
 
-types_of_schools = m['type']
-print(types_of_schools.unique())
 
-m_tree = m[['name', 'enroll', 'state', 'type', 'city', 'mmr', 'overall']]
-m_tree = m_tree.loc[(m_tree['enroll'] >=0)]
-print(m_tree.head(10))
-print(m_tree.tail(10))
-
-m_tree['vac_rate'] = m_tree['mmr']
-
-
-print(m_tree.head(10))
-print(m_tree.tail(10))
 
 
         #print('Note added by my daughter: Kara is cool.')
