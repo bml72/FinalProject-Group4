@@ -9,7 +9,7 @@ from sklearn.tree import DecisionTreeClassifier
 X = m_tree.values[:, 0:5]
 Y = m_tree.values[:, 5]
 
-data_feature_names = ['state', 'city', 'county', 'type', 'enroll']
+data_feature_names = ['state_mean', 'city_mean', 'county_mean', 'type', 'enroll']
 
 clf = tree.DecisionTreeClassifier()
 clf = clf.fit(X,Y)
@@ -92,7 +92,7 @@ print ('-'*80 + '\n')
 #%%-----------------------------------------------------------------------
 # confusion matrix for gini model
 conf_matrix = confusion_matrix(y_test, y_pred_gini)
-class_names = m_tree.Class.unique()
+class_names = m_tree.at_least_95.unique()
 df_cm = pd.DataFrame(conf_matrix, index=class_names, columns=class_names )
 
 plt.figure(figsize=(5,5))
@@ -106,7 +106,7 @@ plt.show()
 
 # confusion matrix for entropy model
 conf_matrix = confusion_matrix(y_test, y_pred_entropy)
-class_names = m_tree.Class.unique()
+class_names = m_tree.at_least_95.unique()
 df_cm = pd.DataFrame(conf_matrix, index=class_names, columns=class_names )
 
 plt.figure(figsize=(5,5))
