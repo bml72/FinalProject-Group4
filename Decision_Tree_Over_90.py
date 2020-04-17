@@ -31,8 +31,8 @@ m['vac_rate'] = m['mmr'].where(m['mmr'] > 0, m['overall'] )
 #Eliminate schoosl with a vegative vac_rate
 m = m.loc[(m['vac_rate'] >= 0)]
 
-#Is the vac_rate >= to 95 percent?
-m['at_least_95'] = (m['vac_rate'] >= 95)
+#Is the vac_rate >= to 90 percent?
+m['at_least_90'] = (m['vac_rate'] >= 90)
 
 #find the mean vac_rate per state
 state_mean = m[['state', 'vac_rate']]
@@ -90,7 +90,7 @@ print(m.tail(10))
 print('\n')
 
 #select columsn to use for DT
-m_tree = m[['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'at_least_95']]
+m_tree = m[['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'at_least_90']]
 
 print(m_tree.head(5))
 print('\n')
@@ -109,7 +109,7 @@ m_tree['city_mean']=le.fit_transform(m_tree['city_mean'])
 m_tree['county_mean']=le.fit_transform(m_tree['county_mean'])
 m_tree['type_of_school']=le.fit_transform(m_tree['type_of_school'])
 m_tree['enroll']=le.fit_transform(m_tree['enroll'])
-m_tree['at_least_95']=le.fit_transform(m_tree['at_least_95'])
+m_tree['at_least_90']=le.fit_transform(m_tree['at_least_90'])
 
 print(m_tree.head(5))
 print('\n')
@@ -210,7 +210,7 @@ print ('-'*80 + '\n')
 #%%-----------------------------------------------------------------------
 # confusion matrix for gini model
 conf_matrix = confusion_matrix(y_test, y_pred_gini)
-class_names = m_tree.at_least_95.unique()
+class_names = m_tree.at_least_90.unique()
 df_cm = pd.DataFrame(conf_matrix, index=class_names, columns=class_names )
 
 plt.figure(figsize=(5,5))
@@ -224,7 +224,7 @@ plt.show()
 
 # confusion matrix for entropy model
 conf_matrix = confusion_matrix(y_test, y_pred_entropy)
-class_names = m_tree.at_least_95.unique()
+class_names = m_tree.at_least_90.unique()
 df_cm = pd.DataFrame(conf_matrix, index=class_names, columns=class_names )
 
 plt.figure(figsize=(5,5))
@@ -236,5 +236,6 @@ plt.xlabel('Predicted label',fontsize=20)
 plt.tight_layout()
 plt.show()
 
-print('Gini 74.8%')
-print("Entropy 73.9%")
+#%%-----------------------------------------------------------------------
+print("Gini 86.8%.")
+print("Entropy 86.8%")
