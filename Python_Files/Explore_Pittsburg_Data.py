@@ -62,28 +62,42 @@ print(mumps_high)
 print('\n')
 rubella_high = rubella.loc[(rubella['incidence_per_capita'] > 50)]
 print(rubella_high)
+
+measles_2000 = measles.loc[(measles['week']>200001)]
+print('measles_2000')
+print(measles_2000)
 print('\n')
 
-print('Find the mean overall measles cases per state:')
-overall_measles = measles[['state_name', 'cases']]
-overall_measles = overall_measles.groupby('state_name').agg({'cases':'mean'}).reset_index()
-overall_measles = overall_measles.rename(columns= {'cases': 'mean_cases'})
-overall_measles = overall_measles.round()
-print(overall_measles.sort_values(by='mean_cases', ascending=False))
+mumps_2000 = mumps.loc[(mumps['week']>200001)]
+print('mumps_2000')
+print(mumps_2000)
 print('\n')
 
-print('Find the mean overall mumps cases per state:')
-overall_mumps = mumps[['state_name', 'cases']]
-overall_mumps = overall_mumps.groupby('state_name').agg({'cases':'mean'}).reset_index()
-overall_mumps = overall_mumps.rename(columns= {'cases': 'mean_cases'})
-overall_mumps = overall_mumps.round()
-print(overall_mumps.sort_values(by='mean_cases', ascending=False))
+rubella_2000 = rubella.loc[(rubella['week']>200001)]
+print('rubella_2000')
+print(rubella_2000)
 print('\n')
 
-print('Find the mean overall rubella cases per state:')
-overall_rubella = rubella[['state_name', 'cases']]
-overall_rubella = overall_rubella.groupby('state_name').agg({'cases':'mean'}).reset_index()
-overall_rubella = overall_rubella.rename(columns= {'cases': 'mean_cases'})
-overall_rubella = overall_rubella.round()
-print(overall_rubella.sort_values(by='mean_cases', ascending=False))
+print('Find the total measles cases per state:')
+overall_measles = measles_2000[['state_name', 'cases']]
+overall_measles = overall_measles.groupby('state_name').agg({'cases':'sum'}).reset_index()
+overall_measles = overall_measles.rename(columns= {'cases': 'sum_cases'})
+#overall_measles = overall_measles.round()
+print(overall_measles.sort_values(by='sum_cases', ascending=False))
+print('\n')
+
+print('Find the total mumps cases per state:')
+overall_mumps = mumps_2000[['state_name', 'cases']]
+overall_mumps = overall_mumps.groupby('state_name').agg({'cases':'sum'}).reset_index()
+overall_mumps = overall_mumps.rename(columns= {'cases': 'sum_cases'})
+#overall_mumps = overall_mumps.round()
+print(overall_mumps.sort_values(by='sum_cases', ascending=False))
+print('\n')
+
+print('Find the total rubella cases per state:')
+overall_rubella = rubella_2000[['state_name', 'cases']]
+overall_rubella = overall_rubella.groupby('state_name').agg({'cases':'sum'}).reset_index()
+overall_rubella = overall_rubella.rename(columns= {'cases': 'sum_cases'})
+#overall_rubella = overall_rubella.round()
+print(overall_rubella.sort_values(by='sum_cases', ascending=False))
 print('\n')

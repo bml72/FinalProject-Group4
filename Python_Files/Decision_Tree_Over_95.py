@@ -13,6 +13,11 @@ import sys
 import numpy as np
 import pandas as pd
 
+# Libraries to display decision tree
+from pydotplus import graph_from_dot_data
+from sklearn.tree import export_graphviz
+import webbrowser
+
 m = pd.read_csv('all-measles-rates.csv')
 desired_width=320
 pd.set_option('display.width', desired_width)

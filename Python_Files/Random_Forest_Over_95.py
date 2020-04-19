@@ -293,5 +293,3 @@ plt.show()
 
 
 # %%-----------------------------------------------------------------------
-print('Increased accuracy from 72.1 to 77.2')
-print("Increased accuracy from 72.2 to 77.2")
