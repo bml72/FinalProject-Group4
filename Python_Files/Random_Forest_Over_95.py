@@ -13,6 +13,11 @@ import sys
 import numpy as np
 import pandas as pd
 
+# Libraries to display decision tree
+from pydotplus import graph_from_dot_data
+from sklearn.tree import export_graphviz
+import webbrowser
+
 m = pd.read_csv('all-measles-rates.csv')
 desired_width=320
 pd.set_option('display.width', desired_width)
@@ -83,6 +88,14 @@ m = m.replace({'type_of_school':ts_dict})
 #fill type_of_school NaN values with zero
 m['type_of_school'] = m['type_of_school'].fillna(0)
 
+#fill exemption values with zero
+m['xrel'] = m['xrel'].fillna(0)
+m['xmed'] = m['xmed'].fillna(0)
+m['xper'] = m['xper'].fillna(0)
+
+#add all the different types of exemptions(religious, medical, and personal) together
+m['xtotal'] = m['xrel'] + m['xmed'] + m['xper']
+
 #make sure all the additions worked
 print(m.head(10))
 print('\n')
@@ -90,7 +103,7 @@ print(m.tail(10))
 print('\n')
 
 #select columsn to use for DT
-m_tree = m[['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'at_least_95']]
+m_tree = m[['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'xtotal', 'at_least_95']]
 
 print(m_tree.head(5))
 print('\n')
@@ -109,6 +122,7 @@ m_tree['city_mean']=le.fit_transform(m_tree['city_mean'])
 m_tree['county_mean']=le.fit_transform(m_tree['county_mean'])
 m_tree['type_of_school']=le.fit_transform(m_tree['type_of_school'])
 m_tree['enroll']=le.fit_transform(m_tree['enroll'])
+m_tree['xtotal']=le.fit_transform(m_tree['xtotal'])
 m_tree['at_least_95']=le.fit_transform(m_tree['at_least_95'])
 
 print(m_tree.head(5))
@@ -166,8 +180,8 @@ print(m_tree.isnull().sum())
 #%%-----------------------------------------------------------------------
 #split the dataset
 # separate the predictor and target variable
-X = m_tree.values[:, 0:5]
-Y = m_tree.values[:, 5]
+X = m_tree.values[:, 0:6]
+Y = m_tree.values[:, 6]
 
 # split the dataset into train and test
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=100)
@@ -184,7 +198,7 @@ clf.fit(X_train, y_train)
 importances = clf.feature_importances_
 
 # convert the importances into one-dimensional 1darray with corresponding df column names as axis labels
-f_importances = pd.Series(importances, m_tree.iloc[:, 0:5].columns)
+f_importances = pd.Series(importances, m_tree.iloc[:, 0:6].columns)
 
 # sort the array in descending order of the importances
 f_importances.sort_values(ascending=False, inplace=True)

@@ -36,8 +36,8 @@ m['vac_rate'] = m['mmr'].where(m['mmr'] > 0, m['overall'] )
 #Eliminate schoosl with a vegative vac_rate
 m = m.loc[(m['vac_rate'] >= 0)]
 
-#Is the vac_rate >= to 95 percent?
-m['at_least_95'] = (m['vac_rate'] >= 95)
+#Is the vac_rate >= to 90 percent?
+m['at_least_90'] = (m['vac_rate'] >= 90)
 
 #find the mean vac_rate per state
 state_mean = m[['state', 'vac_rate']]
@@ -93,6 +93,7 @@ m['xrel'] = m['xrel'].fillna(0)
 m['xmed'] = m['xmed'].fillna(0)
 m['xper'] = m['xper'].fillna(0)
 
+#add all the different types of exemptions(religious, medical, and personal) together
 m['xtotal'] = m['xrel'] + m['xmed'] + m['xper']
 
 #make sure all the additions worked
@@ -102,7 +103,7 @@ print(m.tail(10))
 print('\n')
 
 #select columsn to use for DT
-m_tree = m[['type_of_school', 'xtotal', 'at_least_95']]
+m_tree = m[['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'xtotal', 'at_least_90']]
 
 print(m_tree.head(5))
 print('\n')
@@ -116,134 +117,134 @@ print(m_tree.dtypes)
 #enter variables as binary
 from sklearn.preprocessing import LabelEncoder
 le = LabelEncoder()
-#m_tree['state_mean']=le.fit_transform(m_tree['state_mean'])
-#m_tree['city_mean']=le.fit_transform(m_tree['city_mean'])
-#m_tree['county_mean']=le.fit_transform(m_tree['county_mean'])
+m_tree['state_mean']=le.fit_transform(m_tree['state_mean'])
+m_tree['city_mean']=le.fit_transform(m_tree['city_mean'])
+m_tree['county_mean']=le.fit_transform(m_tree['county_mean'])
 m_tree['type_of_school']=le.fit_transform(m_tree['type_of_school'])
-#m_tree['enroll']=le.fit_transform(m_tree['enroll'])
+m_tree['enroll']=le.fit_transform(m_tree['enroll'])
 m_tree['xtotal']=le.fit_transform(m_tree['xtotal'])
-m_tree['at_least_95']=le.fit_transform(m_tree['at_least_95'])
+m_tree['at_least_90']=le.fit_transform(m_tree['at_least_90'])
 
 print(m_tree.head(5))
 print('\n')
 print(m_tree.tail(5))
 print('\n')
 
-print('Decision Tree Algorithm')
-import pydotplus
-from sklearn.datasets import load_iris
-from sklearn import tree
-import collections
-from sklearn.tree import DecisionTreeClassifier
+#KNN Code
+# %%%%%%%%%%%%% Machine Learning %%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%% Authors  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Dr. Amir Jafari------>Email: amir.h.jafari@okstate.edu
+# Deepak Agarwal------>Email:deepakagarwal@gwmail.gwu.edu
+# %%%%%%%%%%%%% Date:
+# V1 June - 13 - 2018
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%% K-Nearest Neighbor  %%%%%%%%%%%%%%%%%%%%%
+#%%-----------------------------------------------------------------------
+# Importing the required packages
 
-# Data Collection
-X = m_tree.values[:, 0:2]
-Y = m_tree.values[:, 2]
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+import seaborn as sns
+import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings("ignore")
 
-data_feature_names = ['type', 'xtotal']
+#%%-----------------------------------------------------------------------
+#importing Dataset
 
-clf = tree.DecisionTreeClassifier()
-clf = clf.fit(X,Y)
+# define column names
+col_names = ['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'xtotal', 'at_least_90']
 
-# Visualize data
-#dot_data = tree.export_graphviz(clf,
-#                                feature_names=data_feature_names,
-#                                out_file=None,
-#                                filled=True,
-#                                rounded=True)
-#graph = pydotplus.graph_from_dot_data(dot_data)
+# read data as panda dataframe
+#wine_data = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data", header=None, names=col_names)
 
-#colors = ('turquoise', 'orange')
-#edges = collections.defaultdict(list)
+# printing the dataset shape
+print("Dataset No. of Rows: ", m_tree.shape[0])
+print("Dataset No. of Columns: ", m_tree.shape[1])
 
-#for edge in graph.get_edge_list():
-#    edges[edge.get_source()].append(int(edge.get_destination()))
+# printing the dataset observations
+print("Dataset first few rows:\n ")
+print(m_tree.head(2))
 
-#for edge in edges:
-#    edges[edge].sort()
-#    for i in range(2):
-#        dest = graph.get_node(str(edges[edge][i]))[0]
-#        dest.set_fillcolor(colors[i])
+# printing the struture of the dataset
+print("Dataset info:\n ")
+print(m_tree.info())
 
-#graph.write_png('m_tree.png')
-#graph.write_svg('m_tree.svg')
-
+# printing the summary statistics of the dataset
+print(m_tree.describe(include='all'))
+#%%-----------------------------------------------------------------------
 # split the dataset
 # separate the target variable
-X = m_tree.values[:, 0:2]
-y = m_tree.values[:, 2]
+X = m_tree.values[:, 0:6]
+Y = m_tree.values[:, 6]
 
-# encloding the class with sklearn's LabelEncoder
+
+#%%-----------------------------------------------------------------------
+# data preprocessing
+# encode the target variable
 class_le = LabelEncoder()
 
-# fit and transform the class
-y = class_le.fit_transform(y)
+y = class_le.fit_transform(Y)
 
+#%%-----------------------------------------------------------------------
 # split the dataset into train and test
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=100)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=100, stratify=y)
 
-# perform training with giniIndex.
+#%%-----------------------------------------------------------------------
+# data preprocessing
+# standardize the data
+stdsc = StandardScaler()
+
+stdsc.fit(X_train)
+
+X_train_std = stdsc.transform(X_train)
+X_test_std = stdsc.transform(X_test)
+
+#%%-----------------------------------------------------------------------
+# perform training
 # creating the classifier object
-clf_gini = DecisionTreeClassifier(criterion="gini", random_state=100, max_depth=3, min_samples_leaf=5)
+clf = KNeighborsClassifier(n_neighbors=3)
 
 # performing training
-clf_gini.fit(X_train, y_train)
+clf.fit(X_train_std, y_train)
 
-# perform training with entropy.
-# Decision tree with entropy
-clf_entropy = DecisionTreeClassifier(criterion="entropy", random_state=100, max_depth=3, min_samples_leaf=5)
-
-# Performing training
-clf_entropy.fit(X_train, y_train)
 #%%-----------------------------------------------------------------------
 # make predictions
-# predicton on test using gini
-y_pred_gini = clf_gini.predict(X_test)
 
-# predicton on test using entropy
-y_pred_entropy = clf_entropy.predict(X_test)
+# predicton on test
+y_pred = clf.predict(X_test_std)
+
 #%%-----------------------------------------------------------------------
-# calculate metrics gini model
+# calculate metrics
+
 print("\n")
-print("Results Using Gini Index: \n")
 print("Classification Report: ")
-print(classification_report(y_test,y_pred_gini))
+print(classification_report(y_test,y_pred))
 print("\n")
-print("Accuracy : ", accuracy_score(y_test, y_pred_gini) * 100)
+
+
+print("Accuracy : ", accuracy_score(y_test, y_pred) * 100)
 print("\n")
-print ('-'*80 + '\n')
-# calculate metrics entropy model
-print("\n")
-print("Results Using Entropy: \n")
-print("Classification Report: ")
-print(classification_report(y_test,y_pred_entropy))
-print("\n")
-print("Accuracy : ", accuracy_score(y_test, y_pred_entropy) * 100)
-print ('-'*80 + '\n')
+
 #%%-----------------------------------------------------------------------
-# confusion matrix for gini model
-conf_matrix = confusion_matrix(y_test, y_pred_gini)
-class_names = m_tree.at_least_95.unique()
+# confusion matrix
+
+conf_matrix = confusion_matrix(y_test, y_pred)
+class_names = m_tree['at_least_90'].unique()
+
+
 df_cm = pd.DataFrame(conf_matrix, index=class_names, columns=class_names )
 
 plt.figure(figsize=(5,5))
 hm = sns.heatmap(df_cm, cbar=False, annot=True, square=True, fmt='d', annot_kws={'size': 20}, yticklabels=df_cm.columns, xticklabels=df_cm.columns)
-hm.yaxis.set_ticklabels(hm.yaxis.get_ticklabels(), rotation=0, ha='right', fontsize=20)
-hm.xaxis.set_ticklabels(hm.xaxis.get_ticklabels(), rotation=0, ha='right', fontsize=20)
-plt.ylabel('True label',fontsize=20)
-plt.xlabel('Predicted label',fontsize=20)
-plt.tight_layout()
-plt.show()
-
-# confusion matrix for entropy model
-conf_matrix = confusion_matrix(y_test, y_pred_entropy)
-class_names = m_tree.at_least_95.unique()
-df_cm = pd.DataFrame(conf_matrix, index=class_names, columns=class_names )
-
-plt.figure(figsize=(5,5))
-hm = sns.heatmap(df_cm, cbar=False, annot=True, square=True, fmt='d', annot_kws={'size': 20}, yticklabels=df_cm.columns, xticklabels=df_cm.columns)
-hm.yaxis.set_ticklabels(hm.yaxis.get_ticklabels(), rotation=0, ha='right', fontsize=20)
-hm.xaxis.set_ticklabels(hm.xaxis.get_ticklabels(), rotation=0, ha='right', fontsize=20)
+hm.yaxis.set_ticklabels(hm.yaxis.get_ticklabels(), rotation=45, ha='right', fontsize=10)
+hm.xaxis.set_ticklabels(hm.xaxis.get_ticklabels(), rotation=45, ha='right', fontsize=10)
 plt.ylabel('True label',fontsize=20)
 plt.xlabel('Predicted label',fontsize=20)
 plt.tight_layout()
