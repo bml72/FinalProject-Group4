@@ -122,58 +122,121 @@ print(m_tree.tail(5))
 print('\n')
 
 #KNN Code
-# import data
-from sklearn import datasets
-import numpy as np
+# %%%%%%%%%%%%% Machine Learning %%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%% Authors  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Dr. Amir Jafari------>Email: amir.h.jafari@okstate.edu
+# Deepak Agarwal------>Email:deepakagarwal@gwmail.gwu.edu
+# %%%%%%%%%%%%% Date:
+# V1 June - 13 - 2018
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%% K-Nearest Neighbor  %%%%%%%%%%%%%%%%%%%%%
+#%%-----------------------------------------------------------------------
+# Importing the required packages
 
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+import seaborn as sns
+import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings("ignore")
+
+#%%-----------------------------------------------------------------------
+#importing Dataset
+
+# define column names
+col_names = ['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'at_least_95']
+
+# read data as panda dataframe
+#wine_data = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data", header=None, names=col_names)
+
+# printing the dataset shape
+print("Dataset No. of Rows: ", m_tree.shape[0])
+print("Dataset No. of Columns: ", m_tree.shape[1])
+
+# printing the dataset observations
+print("Dataset first few rows:\n ")
+print(m_tree.head(2))
+
+# printing the struture of the dataset
+print("Dataset info:\n ")
+print(m_tree.info())
+
+# printing the summary statistics of the dataset
+print(m_tree.describe(include='all'))
+#%%-----------------------------------------------------------------------
+# split the dataset
+# separate the target variable
 X = m_tree.values[:, 0:5]
 Y = m_tree.values[:, 5]
 
-#-----------------------------------------------------------------------------
-# data pre processing
-from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
-from sklearn.preprocessing import StandardScaler
-sc = StandardScaler()
-sc.fit(X_train)
-X_train_std = sc.transform(X_train)
-X_test_std = sc.transform(X_test)
-X_combined_std = np.vstack((X_train_std, X_test_std))
-y_combined = np.hstack((y_train, y_test))
-#-----------------------------------------------------------------------------
 
-from sklearn.linear_model import LogisticRegression
-import plot_decision_regions as pp
-import matplotlib.pyplot as plt
+#%%-----------------------------------------------------------------------
+# data preprocessing
+# encode the target variable
+class_le = LabelEncoder()
+
+y = class_le.fit_transform(Y)
+
+#%%-----------------------------------------------------------------------
+# split the dataset into train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=100, stratify=y)
+
+#%%-----------------------------------------------------------------------
+# data preprocessing
+# standardize the data
+stdsc = StandardScaler()
+
+stdsc.fit(X_train)
+
+X_train_std = stdsc.transform(X_train)
+X_test_std = stdsc.transform(X_test)
+
+#%%-----------------------------------------------------------------------
+# perform training
+# creating the classifier object
+clf = KNeighborsClassifier(n_neighbors=3)
+
+# performing training
+clf.fit(X_train_std, y_train)
+
+#%%-----------------------------------------------------------------------
+# make predictions
+
+# predicton on test
+y_pred = clf.predict(X_test_std)
+
+#%%-----------------------------------------------------------------------
+# calculate metrics
+
+print("\n")
+print("Classification Report: ")
+print(classification_report(y_test,y_pred))
+print("\n")
 
 
-from sklearn.neighbors import KNeighborsClassifier
-knn = KNeighborsClassifier(n_neighbors=1, p=2,metric='minkowski')
-knn.fit(X_train_std, y_train)
-pp.plot_decision_regions(X_combined_std, y_combined,classifier=knn, test_idx=range(105,150))
-plt.xlabel('school data')
-plt.ylabel('over_95')
+print("Accuracy : ", accuracy_score(y_test, y_pred) * 100)
+print("\n")
+
+#%%-----------------------------------------------------------------------
+# confusion matrix
+
+conf_matrix = confusion_matrix(y_test, y_pred)
+class_names = m_tree['at_least_95'].unique()
+
+
+df_cm = pd.DataFrame(conf_matrix, index=class_names, columns=class_names )
+
+plt.figure(figsize=(5,5))
+hm = sns.heatmap(df_cm, cbar=False, annot=True, square=True, fmt='d', annot_kws={'size': 20}, yticklabels=df_cm.columns, xticklabels=df_cm.columns)
+hm.yaxis.set_ticklabels(hm.yaxis.get_ticklabels(), rotation=45, ha='right', fontsize=10)
+hm.xaxis.set_ticklabels(hm.xaxis.get_ticklabels(), rotation=45, ha='right', fontsize=10)
+plt.ylabel('True label',fontsize=20)
+plt.xlabel('Predicted label',fontsize=20)
+plt.tight_layout()
 plt.show()
-
-# print(knn.score(X_test_std,y_test))
-
-from sklearn.neighbors import NearestNeighbors
-knn2 = NearestNeighbors(n_neighbors=3)
-knn2.fit(X_train_std)
-#print sum(sum((knn2.kneighbors(X_train_std)[0])))
-print(knn2.kneighbors(X_train_std)[0])
-'''
-def loss_function(x,k):
-    sum_distance = sum(sum(k.kneighbors(X_test_std)[0]))
-    return sum_distance
-
-loss_array =[]
-for i in xrange(1,6):
-    knn2 = NearestNeighbors(n_neighbors=i)
-    knn2.fit(X_train_std)
-    loss_array.append(loss_function(X_test_std,knn2))
-
-plt.figure(1)
-plt.scatter([1,2,3,4,5], loss_array)
-plt.show()
-'''
