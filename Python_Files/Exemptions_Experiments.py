@@ -93,7 +93,6 @@ m['xrel'] = m['xrel'].fillna(0)
 m['xmed'] = m['xmed'].fillna(0)
 m['xper'] = m['xper'].fillna(0)
 
-#add all the different types of exemptions(religious, medical, and personal) together
 m['xtotal'] = m['xrel'] + m['xmed'] + m['xper']
 
 #make sure all the additions worked
@@ -103,7 +102,7 @@ print(m.tail(10))
 print('\n')
 
 #select columsn to use for DT
-m_tree = m[['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'xtotal', 'at_least_95']]
+m_tree = m[['type_of_school', 'xtotal', 'at_least_95']]
 
 print(m_tree.head(5))
 print('\n')
@@ -117,11 +116,11 @@ print(m_tree.dtypes)
 #enter variables as binary
 from sklearn.preprocessing import LabelEncoder
 le = LabelEncoder()
-m_tree['state_mean']=le.fit_transform(m_tree['state_mean'])
-m_tree['city_mean']=le.fit_transform(m_tree['city_mean'])
-m_tree['county_mean']=le.fit_transform(m_tree['county_mean'])
+#m_tree['state_mean']=le.fit_transform(m_tree['state_mean'])
+#m_tree['city_mean']=le.fit_transform(m_tree['city_mean'])
+#m_tree['county_mean']=le.fit_transform(m_tree['county_mean'])
 m_tree['type_of_school']=le.fit_transform(m_tree['type_of_school'])
-m_tree['enroll']=le.fit_transform(m_tree['enroll'])
+#m_tree['enroll']=le.fit_transform(m_tree['enroll'])
 m_tree['xtotal']=le.fit_transform(m_tree['xtotal'])
 m_tree['at_least_95']=le.fit_transform(m_tree['at_least_95'])
 
@@ -138,10 +137,10 @@ import collections
 from sklearn.tree import DecisionTreeClassifier
 
 # Data Collection
-X = m_tree.values[:, 0:6]
-Y = m_tree.values[:, 6]
+X = m_tree.values[:, 0:2]
+Y = m_tree.values[:, 2]
 
-data_feature_names = ['state_mean', 'city_mean', 'county_mean', 'type', 'xtotal', 'enroll']
+data_feature_names = ['type', 'xtotal']
 
 clf = tree.DecisionTreeClassifier()
 clf = clf.fit(X,Y)
@@ -171,8 +170,8 @@ clf = clf.fit(X,Y)
 
 # split the dataset
 # separate the target variable
-X = m_tree.values[:, 0:6]
-y = m_tree.values[:, 6]
+X = m_tree.values[:, 0:2]
+y = m_tree.values[:, 2]
 
 # encloding the class with sklearn's LabelEncoder
 class_le = LabelEncoder()
