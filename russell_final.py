@@ -120,13 +120,8 @@ def regression(state):
 	print('The score of the model: ', round(mlr.score(x_test, y_test), 3))
 
 
-	
 
-
-if __name__=="__main__":regression("Oregon")
-
-
-
+if __name__=="__main__":regression("Ohio")
 
 
 
