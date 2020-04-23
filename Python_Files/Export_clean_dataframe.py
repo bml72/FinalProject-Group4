@@ -39,6 +39,9 @@ m = m.loc[(m['vac_rate'] >= 0)]
 #Is the vac_rate >= to 95 percent?
 m['at_least_95'] = (m['vac_rate'] >= 95)
 
+#Is the vac_rate >= to 90 percent?
+m['at_least_90'] = (m['vac_rate'] >= 90)
+
 #find the mean vac_rate per state
 state_mean = m[['state', 'vac_rate']]
 state_mean = m.groupby('state').agg({'vac_rate':'mean'}).reset_index()
@@ -103,7 +106,7 @@ print(m.tail(10))
 print('\n')
 
 #select columsn to use for DT
-m_tree = m[['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'xtotal', 'at_least_95']]
+m_tree = m[['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'xtotal', 'at_least_95', 'at_least_90']]
 
 print(m_tree.head(5))
 print('\n')
@@ -124,6 +127,7 @@ m_tree['type_of_school']=le.fit_transform(m_tree['type_of_school'])
 m_tree['enroll']=le.fit_transform(m_tree['enroll'])
 m_tree['xtotal']=le.fit_transform(m_tree['xtotal'])
 m_tree['at_least_95']=le.fit_transform(m_tree['at_least_95'])
+m_tree['at_least_90']=le.fit_transform(m_tree['at_least_90'])
 
 print(m_tree.head(5))
 print('\n')
