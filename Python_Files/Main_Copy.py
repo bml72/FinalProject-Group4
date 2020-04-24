@@ -50,6 +50,16 @@ import warnings
 warnings.filterwarnings("ignore")
 import matplotlib.pyplot as plt
 
+#KNN libraries
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+
 import random
 import seaborn as sns
 
@@ -77,7 +87,7 @@ class RandomForest(QMainWindow):
 
     def __init__(self):
         super(RandomForest, self).__init__()
-        self.Title = "Radom Forest MMR"
+        self.Title = "Random Forest MMR"
         self.initUi()
 
     def initUi(self):
@@ -280,8 +290,6 @@ class RandomForest(QMainWindow):
 
         X_train, X_test, y_train, y_test = train_test_split(X_dt, y_dt, test_size=vtest_per, random_state=100)
 
-        # perform training with entropy.
-        # Decision tree with entropy
 
         #specify random forest classifier
         self.clf_rf = RandomForestClassifier(n_estimators=100, random_state=100)
@@ -353,8 +361,6 @@ class RandomForest(QMainWindow):
         # show the plot
         self.fig3.tight_layout()
         self.fig3.canvas.draw_idle()
-
-
 
 class DecisionTree(QMainWindow):
     #::----------------------
@@ -479,51 +485,14 @@ class DecisionTree(QMainWindow):
         ## End Graph1
         #::--------------------------------------------
 
-        #::---------------------------------------------
-        # Graphic 2 : ROC Curve
-        #::---------------------------------------------
 
-        self.fig2 = Figure()
-        self.ax2 = self.fig2.add_subplot(111)
-        self.axes2 = [self.ax2]
-        self.canvas2 = FigureCanvas(self.fig2)
-
-        self.canvas2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
-        self.canvas2.updateGeometry()
-
-        self.groupBoxG2 = QGroupBox('ROC Curve')
-        self.groupBoxG2Layout = QVBoxLayout()
-        self.groupBoxG2.setLayout(self.groupBoxG2Layout)
-
-        self.groupBoxG2Layout.addWidget(self.canvas2)
-
-        #::---------------------------------------------------
-        # Graphic 3 : ROC Curve by Class
-        #::---------------------------------------------------
-
-        self.fig3 = Figure()
-        self.ax3 = self.fig3.add_subplot(111)
-        self.axes3 = [self.ax3]
-        self.canvas3 = FigureCanvas(self.fig3)
-
-        self.canvas3.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
-        self.canvas3.updateGeometry()
-
-        self.groupBoxG3 = QGroupBox('ROC Curve by Class')
-        self.groupBoxG3Layout = QVBoxLayout()
-        self.groupBoxG3.setLayout(self.groupBoxG3Layout)
-
-        self.groupBoxG3Layout.addWidget(self.canvas3)
 
         ## End of elements o the dashboard
 
         self.layout.addWidget(self.groupBox1,0,0)
         self.layout.addWidget(self.groupBoxG1,0,1)
         self.layout.addWidget(self.groupBox2,0,2)
-        self.layout.addWidget(self.groupBoxG2,1,1)
-        self.layout.addWidget(self.groupBoxG3,1,2)
+
 
         self.setCentralWidget(self.main_widget)
         self.resize(1100, 700)
@@ -584,8 +553,6 @@ class DecisionTree(QMainWindow):
         vmax_depth = float(self.txtMaxDepth.text())
 
         self.ax1.clear()
-        self.ax2.clear()
-        self.ax3.clear()
         self.txtResults.clear()
         self.txtResults.setUndoRedoEnabled(False)
 
@@ -671,6 +638,415 @@ class DecisionTree(QMainWindow):
         graph = graph_from_dot_data(dot_data)
         graph.write_pdf("decision_tree_entropy.pdf")
         webbrowser.open_new(r'decision_tree_entropy.pdf')
+
+
+class CorrelationPlot(QMainWindow):
+    #;:-----------------------------------------------------------------------
+    # This class creates a canvas to draw a correlation plot
+    # It presents all the features plus the happiness score
+    # the methods for this class are:
+    #   _init_
+    #   initUi
+    #   update
+    #::-----------------------------------------------------------------------
+    send_fig = pyqtSignal(str)
+
+    def __init__(self):
+        #::--------------------------------------------------------
+        # Initialize the values of the class
+        #::--------------------------------------------------------
+        super(CorrelationPlot, self).__init__()
+
+        self.Title = 'Correlation Plot'
+        self.initUi()
+
+    def initUi(self):
+        #::--------------------------------------------------------------
+        #  Creates the canvas and elements of the canvas
+        #::--------------------------------------------------------------
+        self.setWindowTitle(self.Title)
+        self.setStyleSheet(font_size_window)
+
+        self.main_widget = QWidget(self)
+
+        self.layout = QVBoxLayout(self.main_widget)
+
+        self.groupBox1 = QGroupBox('Correlation Plot Features')
+        self.groupBox1Layout= QGridLayout()
+        self.groupBox1.setLayout(self.groupBox1Layout)
+
+
+        self.feature0 = QCheckBox(features_list[0],self)
+        self.feature1 = QCheckBox(features_list[1],self)
+        self.feature2 = QCheckBox(features_list[2], self)
+        self.feature3 = QCheckBox(features_list[3], self)
+        self.feature4 = QCheckBox(features_list[4],self)
+        self.feature5 = QCheckBox(features_list[5],self)
+
+        self.feature0.setChecked(True)
+        self.feature1.setChecked(True)
+        self.feature2.setChecked(True)
+        self.feature3.setChecked(True)
+        self.feature4.setChecked(True)
+        self.feature5.setChecked(True)
+
+
+        self.btnExecute = QPushButton("Create Plot")
+        self.btnExecute.clicked.connect(self.update)
+
+        self.groupBox1Layout.addWidget(self.feature0,0,0)
+        self.groupBox1Layout.addWidget(self.feature1,0,1)
+        self.groupBox1Layout.addWidget(self.feature2,0,2)
+        self.groupBox1Layout.addWidget(self.feature3,0,3)
+        self.groupBox1Layout.addWidget(self.feature4,1,0)
+        self.groupBox1Layout.addWidget(self.feature5,1,1)
+
+        self.groupBox1Layout.addWidget(self.btnExecute,2,0)
+
+
+        self.fig = Figure()
+        self.ax1 = self.fig.add_subplot(111)
+        self.axes=[self.ax1]
+        self.canvas = FigureCanvas(self.fig)
+
+        self.canvas.setSizePolicy(QSizePolicy.Expanding,
+                                  QSizePolicy.Expanding)
+
+        self.canvas.updateGeometry()
+
+
+        self.groupBox2 = QGroupBox('Correlation Plot')
+        self.groupBox2Layout= QVBoxLayout()
+        self.groupBox2.setLayout(self.groupBox2Layout)
+
+        self.groupBox2Layout.addWidget(self.canvas)
+
+
+        self.layout.addWidget(self.groupBox1)
+        self.layout.addWidget(self.groupBox2)
+
+        self.setCentralWidget(self.main_widget)
+        self.resize(900, 700)
+        self.show()
+        self.update()
+
+    def update(self):
+
+        #::------------------------------------------------------------
+        # Populates the elements in the canvas using the values
+        # chosen as parameters for the correlation plot
+        #::------------------------------------------------------------
+        self.ax1.clear()
+
+        X_1 = ff_happiness.values[:, 0:6]
+
+        list_corr_features = pd.DataFrame(ff_happiness.values[:, 0:6])
+        if self.feature0.isChecked():
+            list_corr_features = pd.concat([list_corr_features, ff_happiness[features_list[0]]],axis=1)
+
+        if self.feature1.isChecked():
+            list_corr_features = pd.concat([list_corr_features, ff_happiness[features_list[1]]],axis=1)
+
+        if self.feature2.isChecked():
+            list_corr_features = pd.concat([list_corr_features, ff_happiness[features_list[2]]],axis=1)
+
+        if self.feature3.isChecked():
+            list_corr_features = pd.concat([list_corr_features, ff_happiness[features_list[3]]],axis=1)
+        if self.feature4.isChecked():
+            list_corr_features = pd.concat([list_corr_features, ff_happiness[features_list[4]]],axis=1)
+
+        if self.feature5.isChecked():
+            list_corr_features = pd.concat([list_corr_features, ff_happiness[features_list[5]]],axis=1)
+
+
+
+        vsticks = ["dummy"]
+        vsticks1 = list(list_corr_features.columns)
+        vsticks1 = vsticks + vsticks1
+        res_corr = list_corr_features.corr()
+        self.ax1.matshow(res_corr, cmap= plt.cm.get_cmap('Blues', 14))
+        self.ax1.set_yticklabels(vsticks1)
+        self.ax1.set_xticklabels(vsticks1,rotation = 90)
+
+        self.fig.tight_layout()
+        self.fig.canvas.draw_idle()
+
+
+class KNN(QMainWindow):
+    #::----------------------
+    # Implementation of KNN Algorithm
+    # the methods in this class are
+    #       _init_ : initialize the class
+    #       initUi : creates the canvas and all the elements in the canvas
+    #       update : populates the elements of the canvas base on the parametes
+    #               chosen by the user
+    #       view_tree : shows the tree in a pdf form
+    #::----------------------
+
+    send_fig = pyqtSignal(str)
+
+    def __init__(self):
+        super(KNN, self).__init__()
+
+        self.Title ="KNN Classifier"
+        self.initUi()
+
+    def initUi(self):
+        #::-----------------------------------------------------------------
+        #  Create the canvas and all the element to create a dashboard with
+        #  all the necessary elements to present the results from the algorithm
+        #  The canvas is divided using a  grid loyout to facilitate the drawing
+        #  of the elements
+        #::-----------------------------------------------------------------
+
+        self.setWindowTitle(self.Title)
+        self.setStyleSheet(font_size_window)
+
+        self.main_widget = QWidget(self)
+
+        self.layout = QGridLayout(self.main_widget)
+
+        self.groupBox1 = QGroupBox('ML KNN Features')
+        self.groupBox1Layout= QGridLayout()
+        self.groupBox1.setLayout(self.groupBox1Layout)
+
+        self.feature0 = QCheckBox(features_list[0],self)
+        self.feature1 = QCheckBox(features_list[1],self)
+        self.feature2 = QCheckBox(features_list[2], self)
+        self.feature3 = QCheckBox(features_list[3], self)
+        self.feature4 = QCheckBox(features_list[4],self)
+        self.feature5 = QCheckBox(features_list[5],self)
+
+        self.feature0.setChecked(True)
+        self.feature1.setChecked(True)
+        self.feature2.setChecked(True)
+        self.feature3.setChecked(True)
+        self.feature4.setChecked(True)
+        self.feature5.setChecked(True)
+
+
+        self.lblPercentTest = QLabel('Percentage for Test :')
+        self.lblPercentTest.adjustSize()
+
+        self.txtPercentTest = QLineEdit(self)
+        self.txtPercentTest.setText("30")
+
+        self.lblMaxDepth = QLabel('N Neighbors :')
+        self.txtMaxDepth = QLineEdit(self)
+        self.txtMaxDepth.setText("3")
+
+        self.btnExecute = QPushButton("Execute KNN")
+        self.btnExecute.clicked.connect(self.update)
+
+
+
+        # We create a checkbox for each feature
+
+        self.groupBox1Layout.addWidget(self.feature0,0,0)
+        self.groupBox1Layout.addWidget(self.feature1,0,1)
+        self.groupBox1Layout.addWidget(self.feature2,1,0)
+        self.groupBox1Layout.addWidget(self.feature3,1,1)
+        self.groupBox1Layout.addWidget(self.feature4,2,0)
+        self.groupBox1Layout.addWidget(self.feature5,2,1)
+
+        self.groupBox1Layout.addWidget(self.lblPercentTest,4,0)
+        self.groupBox1Layout.addWidget(self.txtPercentTest,4,1)
+        self.groupBox1Layout.addWidget(self.lblMaxDepth,5,0)
+        self.groupBox1Layout.addWidget(self.txtMaxDepth,5,1)
+        self.groupBox1Layout.addWidget(self.btnExecute,6,0)
+
+        self.groupBox2 = QGroupBox('Results from the model')
+        self.groupBox2Layout = QVBoxLayout()
+        self.groupBox2.setLayout(self.groupBox2Layout)
+
+        self.lblResults = QLabel('Results:')
+        self.lblResults.adjustSize()
+        self.txtResults = QPlainTextEdit()
+        self.lblAccuracy = QLabel('Accuracy:')
+        self.txtAccuracy = QLineEdit()
+
+        self.groupBox2Layout.addWidget(self.lblResults)
+        self.groupBox2Layout.addWidget(self.txtResults)
+        self.groupBox2Layout.addWidget(self.lblAccuracy)
+        self.groupBox2Layout.addWidget(self.txtAccuracy)
+
+        #::-------------------------------------
+        # Graphic 1 : Confusion Matrix
+        #::-------------------------------------
+
+        self.fig = Figure()
+        self.ax1 = self.fig.add_subplot(111)
+        self.axes=[self.ax1]
+        self.canvas = FigureCanvas(self.fig)
+
+        self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        self.canvas.updateGeometry()
+
+        self.groupBoxG1 = QGroupBox('Confusion Matrix')
+        self.groupBoxG1Layout= QVBoxLayout()
+        self.groupBoxG1.setLayout(self.groupBoxG1Layout)
+
+        self.groupBoxG1Layout.addWidget(self.canvas)
+
+        #::--------------------------------------------
+        ## End Graph1
+        #::--------------------------------------------
+
+
+
+        ## End of elements o the dashboard
+
+        self.layout.addWidget(self.groupBox1,0,0)
+        self.layout.addWidget(self.groupBoxG1,0,1)
+        self.layout.addWidget(self.groupBox2,0,2)
+
+
+        self.setCentralWidget(self.main_widget)
+        self.resize(1100, 700)
+        self.show()
+
+
+    def update(self):
+        '''
+        KNN Algorithm
+        We pupulate the dashboard using the parametres chosen by the user
+        The parameters are processed to execute in the skit-learn KNN algorithm
+          then the results are presented in graphics and reports in the canvas
+        :return: None
+        '''
+
+        # We process the parameters
+        self.list_corr_features = pd.DataFrame([])
+        if self.feature0.isChecked():
+            if len(self.list_corr_features)==0:
+                self.list_corr_features = ff_happiness[features_list[0]]
+            else:
+                self.list_corr_features = pd.concat([self.list_corr_features, ff_happiness[features_list[0]]],axis=1)
+
+        if self.feature1.isChecked():
+            if len(self.list_corr_features) == 0:
+                self.list_corr_features = ff_happiness[features_list[1]]
+            else:
+                self.list_corr_features = pd.concat([self.list_corr_features, ff_happiness[features_list[1]]],axis=1)
+
+        if self.feature2.isChecked():
+            if len(self.list_corr_features) == 0:
+                self.list_corr_features = ff_happiness[features_list[2]]
+            else:
+                self.list_corr_features = pd.concat([self.list_corr_features, ff_happiness[features_list[2]]],axis=1)
+
+        if self.feature3.isChecked():
+            if len(self.list_corr_features) == 0:
+                self.list_corr_features = ff_happiness[features_list[3]]
+            else:
+                self.list_corr_features = pd.concat([self.list_corr_features, ff_happiness[features_list[3]]],axis=1)
+
+        if self.feature4.isChecked():
+            if len(self.list_corr_features) == 0:
+                self.list_corr_features = ff_happiness[features_list[4]]
+            else:
+                self.list_corr_features = pd.concat([self.list_corr_features, ff_happiness[features_list[4]]],axis=1)
+
+        if self.feature5.isChecked():
+            if len(self.list_corr_features) == 0:
+                self.list_corr_features = ff_happiness[features_list[5]]
+            else:
+                self.list_corr_features = pd.concat([self.list_corr_features, ff_happiness[features_list[5]]],axis=1)
+
+
+        vtest_per = float(self.txtPercentTest.text())
+        vmax_depth = int(self.txtMaxDepth.text())
+
+        self.ax1.clear()
+        self.txtResults.clear()
+        self.txtResults.setUndoRedoEnabled(False)
+
+        vtest_per = vtest_per / 100
+
+
+        # We assign the values to X and y to run the algorithm
+
+        X_dt =  self.list_corr_features
+        y_dt = ff_happiness["at_least_95"]
+
+        class_le = LabelEncoder()
+
+        # fit and transform the class
+
+        y_dt = class_le.fit_transform(y_dt)
+
+        # split the dataset into train and test
+        X_train, X_test, y_train, y_test = train_test_split(X_dt, y_dt, test_size=vtest_per, random_state=100, stratify=y_dt)
+
+        # %%-----------------------------------------------------------------------
+        # data preprocessing
+        # standardize the data
+        stdsc = StandardScaler()
+
+        stdsc.fit(X_train)
+
+        X_train_std = stdsc.transform(X_train)
+        X_test_std = stdsc.transform(X_test)
+
+        # %%-----------------------------------------------------------------------
+
+        # perform training
+        # creating the classifier object
+        self.clf = KNeighborsClassifier(n_neighbors=3)
+
+        #performing training
+        self.clf.fit(X_train_std, y_train)
+
+        # %%-----------------------------------------------------------------------
+        # make predictions
+
+        # predicton on test
+        y_pred_KNN = self.clf.predict(X_test_std)
+
+
+        # %%-----------------------------------------------------------------------
+
+        # confusion matrix for KNN model
+
+        conf_matrix = confusion_matrix(y_test, y_pred_KNN)
+
+        # clasification report
+
+        self.ff_class_rep = classification_report(y_test, y_pred_KNN)
+        self.txtResults.appendPlainText(self.ff_class_rep)
+
+        # accuracy score
+
+        self.ff_accuracy_score = accuracy_score(y_test, y_pred_KNN) * 100
+        self.txtAccuracy.setText(str(self.ff_accuracy_score))
+
+
+        #::----------------------------------------------------------------
+        # Graph1 -- Confusion Matrix
+        #::-----------------------------------------------------------------
+
+        self.ax1.set_xlabel('Predicted label')
+        self.ax1.set_ylabel('True label')
+
+        class_names1 = ['','under_95', 'at_least_95']
+
+        self.ax1.matshow(conf_matrix, cmap= plt.cm.get_cmap('Blues', 14))
+        self.ax1.set_yticklabels(class_names1)
+        self.ax1.set_xticklabels(class_names1,rotation = 90)
+
+        for i in range(len(class_names)):
+            for j in range(len(class_names)):
+                y_pred_score = self.clf.predict_proba(X_test)
+                self.ax1.text(j, i, str(conf_matrix[i][j]))
+
+        self.fig.tight_layout()
+        self.fig.canvas.draw_idle()
+
+        #::-----------------------------------------------------
+        # End Graph 1 -- Confusioin Matrix
+        #::-----------------------------------------------------
+
 
 
 class CorrelationPlot(QMainWindow):
@@ -1024,9 +1400,13 @@ class App(QMainWindow):
         RFButton.setStatusTip('Random Forest')
         RFButton.triggered.connect(self.MLRF)
 
+        #::------------------------------------------------------
+        # KNN Model
+        #::------------------------------------------------------
+
         KNNButton = QAction(QIcon(), 'KNN', self)
         KNNButton.setStatusTip('KNN')
-        KNNButton.triggered.connect(self.MLRF)
+        KNNButton.triggered.connect(self.MLKNN)
 
         MLModelsMenu.addAction(DTButton)
         MLModelsMenu.addAction(RFButton)
@@ -1092,9 +1472,17 @@ class App(QMainWindow):
     def MLRF(self):
         #::-------------------------------------------------------------
         # This function creates an instance of the Random Forest Classifier Algorithm
-        # using the happiness dataset
         #::-------------------------------------------------------------
         dialog = RandomForest()
+        self.dialogs.append(dialog)
+        dialog.show()
+
+    def MLKNN(self):
+        #::-----------------------------------------------------------
+        # This function creates an instance of the DecisionTree class
+        # This class presents a dashboard for a KNN Algorithm
+        #::-----------------------------------------------------------
+        dialog = KNN()
         self.dialogs.append(dialog)
         dialog.show()
 
