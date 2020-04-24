@@ -993,7 +993,7 @@ class KNN(QMainWindow):
 
         # perform training
         # creating the classifier object
-        self.clf = KNeighborsClassifier(n_neighbors=3)
+        self.clf = KNeighborsClassifier(n_neighbors=vmax_depth)
 
         #performing training
         self.clf.fit(X_train_std, y_train)

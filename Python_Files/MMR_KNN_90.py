@@ -130,6 +130,12 @@ print('\n')
 print(m_tree.tail(5))
 print('\n')
 
+b = m_tree['at_least_90']
+print("at least 90")
+print(np.count_nonzero(b))
+print('less than 90')
+print(b.value_counts())
+
 #KNN Code
 # %%%%%%%%%%%%% Machine Learning %%%%%%%%%%%%%%%%%%%%%%%%
 # %%%%%%%%%%%%% Authors  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

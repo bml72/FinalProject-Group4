@@ -993,7 +993,7 @@ class KNN(QMainWindow):
 
         # perform training
         # creating the classifier object
-        self.clf = KNeighborsClassifier(n_neighbors=3)
+        self.clf = KNeighborsClassifier(n_neighbors=vmax_depth)
 
         #performing training
         self.clf.fit(X_train_std, y_train)
@@ -1366,8 +1366,8 @@ class App(QMainWindow):
         # Correlation Plot : Correlation plot using all the dims in the datasets
         #::----------------------------------------
 
-        EDA1Button = QAction(QIcon('../../Data-Mining/Demo/PyQt5/Demo/analysis.png'), 'Initial Assesment', self)
-        EDA1Button.setStatusTip('Presents the initial datasets')
+        EDA1Button = QAction(QIcon('../../dats6103-group-project/Python_Files/decision_tree_entropy.pdf'), 'Decision Tree Visual', self)
+        EDA1Button.setStatusTip('Shows the Decision Tree')
         EDA1Button.triggered.connect(self.EDA1)
         MapsMenu.addAction(EDA1Button)
 
