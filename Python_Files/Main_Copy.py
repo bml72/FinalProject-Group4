@@ -899,29 +899,6 @@ class App(QMainWindow):
 
         fileMenu.addAction(exitButton)
 
-        #::----------------------------------------
-        # EDA analysis
-        # Creates the actions for the EDA Analysis item
-        # Initial Assesment : Histogram about the level of happiness in 2017
-        # Happiness Final : Presents the correlation between the index of happiness and a feature from the datasets.
-        # Correlation Plot : Correlation plot using all the dims in the datasets
-        #::----------------------------------------
-
-        EDA1Button = QAction(QIcon('../../dats6103-group-project/Python_Files/decision_tree_entropy.pdf'), 'Decision Tree Visual', self)
-        EDA1Button.setStatusTip('Shows the Decision Tree')
-        EDA1Button.triggered.connect(self.EDA1)
-        MapsMenu.addAction(EDA1Button)
-
-        EDA2Button = QAction(QIcon('../../Data-Mining/Demo/PyQt5/Demo/analysis.png'), 'Happiness Final', self)
-        EDA2Button.setStatusTip('Final Happiness Graph')
-        EDA2Button.triggered.connect(self.EDA2)
-        MapsMenu.addAction(EDA2Button)
-
-        EDA4Button = QAction(QIcon('../../Data-Mining/Demo/PyQt5/Demo/analysis.png'), 'Correlation Plot', self)
-        EDA4Button.setStatusTip('Features Correlation Plot')
-        EDA4Button.triggered.connect(self.EDA4)
-        MapsMenu.addAction(EDA4Button)
-
         #::--------------------------------------------------
         # ML Models for prediction
         # There are two models
@@ -964,41 +941,6 @@ class App(QMainWindow):
 
         RegMenu.addAction(Reg1Button)
 
-    def EDA1(self):
-        #::------------------------------------------------------
-        # Creates the histogram
-        # The X variable contains the happiness.score
-        # X was populated in the method data_happiness()
-        # at the start of the application
-        #::------------------------------------------------------
-        dialog = CanvasWindow(self)
-        dialog.m.plot()
-        dialog.m.ax.hist(X, bins=12, facecolor='green', alpha=0.5)
-        dialog.m.ax.set_title('Frequency of Happiness Year 2017')
-        dialog.m.ax.set_xlabel("Level of Happiness")
-        dialog.m.ax.set_ylabel("Number of Countries")
-        dialog.m.ax.grid(True)
-        dialog.m.draw()
-        self.dialogs.append(dialog)
-        dialog.show()
-
-    def EDA2(self):
-        #::---------------------------------------------------------
-        # This function creates an instance of HappinessGraphs class
-        # This class creates a graph using the features in the dataset
-        # happiness vrs the score of happiness
-        #::---------------------------------------------------------
-        dialog = HappinessGraphs()
-        self.dialogs.append(dialog)
-        dialog.show()
-
-    def EDA4(self):
-        #::----------------------------------------------------------
-        # This function creates an instance of the CorrelationPlot class
-        #::----------------------------------------------------------
-        dialog = CorrelationPlot()
-        self.dialogs.append(dialog)
-        dialog.show()
 
     def MLDT(self):
         #::-----------------------------------------------------------
