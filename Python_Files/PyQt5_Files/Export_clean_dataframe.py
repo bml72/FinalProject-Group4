@@ -27,6 +27,7 @@ print('\n')
 
 #Eliminate schools with no enrollment data
 m = m.loc[(m['enroll'] > 0)]
+
 #what do we do with a school of enrollment 1? Is that valid data??
 
 #Combine mmr and overall vaccination rates: use mmr if given, overall if no mmr available.
@@ -105,7 +106,7 @@ print('\n')
 print(m.tail(10))
 print('\n')
 
-#select columsn to use for DT
+#select columns to use for DT
 m_tree = m[['state_mean', 'city_mean', 'county_mean', 'type_of_school', 'enroll', 'xtotal', 'at_least_95', 'at_least_90']]
 
 print(m_tree.head(5))
