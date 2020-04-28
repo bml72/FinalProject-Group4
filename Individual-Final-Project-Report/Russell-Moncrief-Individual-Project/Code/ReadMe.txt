@@ -1,12 +1,5 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2511
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww10800\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+This is code is able to run as long as it accompanied by the all-measles-rates.csv file.
 
-\f0\fs24 \cf0 This is code is able to run as long as it accompanied by the all-measles-rates.csv file.\
-\
-This code runs a regression by state.  Scroll to the bottom and input the desired state:\
-\
+This code runs a regression by state.  Scroll to the bottom and input the desired state:
+
 if __name__=="__main__":regression("Oregon")}
