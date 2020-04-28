@@ -2242,7 +2242,11 @@ def data_mmr():
     global features_list
     global class_names
     global state_names
-  
+    global data
+
+    data = pd.read_csv('all-measles-rates.csv', sep=",", error_bad_lines=False)
+    data.columns = ['index', 'state', 'year', 'name', 'type', 'city', 'county',
+                    'district', 'enroll', 'mmr', 'overall', 'xrel', 'xmed', 'xper']
     mmr = pd.read_csv('m_tree.csv')
     features_list = ["state_mean", "city_mean", "county_mean", "type_of_school",
          "enroll", "xtotal"]
