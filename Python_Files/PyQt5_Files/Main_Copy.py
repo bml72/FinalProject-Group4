@@ -1648,7 +1648,7 @@ class Regression(QMainWindow):
     send_fig = pyqtSignal(str)
 
     def __init__(self):
-        super(LinearRegression, self).__init__()
+        super(Regression, self).__init__()
         self.Title = "Linear Regresion"
         self.initUi()
 
@@ -1734,15 +1734,21 @@ class Regression(QMainWindow):
         self.state30.setChecked(True)
 
 
-        self.lblPercentTest = QLabel('Percentage for Test :')
-        self.lblPercentTest.adjustSize()
-
-        self.txtPercentTest = QLineEdit(self)
-        self.txtPercentTest.setText("30")
-
+        self.setCentralWidget(self.main_widget)
+        self.resize(1100, 700)
+        self.show()
+        
         self.btnExecute = QPushButton("Execute Regression")
         self.btnExecute.clicked.connect(self.update)
-
+        
+        self.groupBox1Layout.addWidget(self.state0,0,0)
+        self.groupBox1Layout.addWidget(self.state1,0,1)
+        self.groupBox1Layout.addWidget(self.state2,1,0)
+        self.groupBox1Layout.addWidget(self.state3,1,1)
+        self.groupBox1Layout.addWidget(self.state4,2,0)
+        self.groupBox1Layout.addWidget(self.state5,2,1)
+        self.groupBox1Layout.addWidget(self.btnExecute,6,0)
+        
         self.groupBox2 = QGroupBox('Results from the model')
         self.groupBox2Layout = QVBoxLayout()
         self.groupBox2.setLayout(self.groupBox2Layout)
@@ -1750,23 +1756,10 @@ class Regression(QMainWindow):
         self.lblResults = QLabel('Results:')
         self.lblResults.adjustSize()
         self.txtResults = QPlainTextEdit()
-        self.lblAccuracy = QLabel('Accuracy:')
-        self.txtAccuracy = QLineEdit()
-
+        
+        
         self.groupBox2Layout.addWidget(self.lblResults)
         self.groupBox2Layout.addWidget(self.txtResults)
-        self.groupBox2Layout.addWidget(self.lblAccuracy)
-        self.groupBox2Layout.addWidget(self.txtAccuracy)
-
-
-        self.layout.addWidget(self.groupBox1,0,0)
-        self.layout.addWidget(self.groupBoxG1,0,1)
-        self.layout.addWidget(self.groupBox2,1,0)
-        self.layout.addWidget(self.groupBoxG3,0,2)
-
-        self.setCentralWidget(self.main_widget)
-        self.resize(1100, 700)
-        self.show()
 
     def update(self):
         #::-------------------------------------------------
@@ -2251,10 +2244,10 @@ def data_mmr():
     features_list = ["state_mean", "city_mean", "county_mean", "type_of_school",
          "enroll", "xtotal"]
     class_names = ['under_95', 'at_least_95']
-    state_names = ['Arizona', 'Arkansas', 'Colorado', 'Connecticut', 'Florida', 'Idaho',
+    state_names = ['Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Florida', 'Idaho',
             'Illinois', 'Iowa', 'Maine', 'Massachusetts', 'Michigan', 'Minnesota',
-            'Missouri', 'Montana', 'New Jersey', 'New York', 'North Carolina'
-            'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania'
+            'Missouri', 'Montana', 'New Jersey', 'New York', 'North Carolina',
+            'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania',
             'Rhode Island', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
             'Virginia', 'Washington', 'Wisconsin']
 
