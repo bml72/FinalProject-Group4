@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from sklearn import preprocessing
 
+
 def regression(state):
 	data = pd.read_csv('all-measles-rates.csv', sep=",", error_bad_lines=False)
 	data.columns = ['index', 'state', 'year', 'name', 'type', 'city', 'county', 
@@ -80,16 +81,21 @@ def regression(state):
 
 	#Test train split and linear regression
 	x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20, random_state=0)
+	print('Shape of datasets')
+	print(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
+	print()
 	mlr = LinearRegression()
 	mlr.fit(x_train, y_train)
 	y_pred = mlr.predict(x_test)
 
 	#Print coefficients and metrics
+	print()
 	coeff_df = pd.DataFrame(mlr.coef_, x.columns, columns=['Coefficient'])
-	coeff_df
+	print(coeff_df)
 	print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
 	print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
 	print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+	print()
 
 	#View actual vs predicted and model score
 	df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
@@ -120,7 +126,8 @@ def regression(state):
 
 
 
-if __name__=="__main__":regression("Ohio")
+
+if __name__=="__main__":regression("Oregon")
 
 
 
