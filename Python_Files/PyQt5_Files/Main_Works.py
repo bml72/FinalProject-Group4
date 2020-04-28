@@ -1,5 +1,5 @@
 ##################################################
-### Created by Ben, Russell, and Kristin
+### Created by Kristin Levine
 ### Project Name : MMR Vaccination Rates
 ### Date 04/28/2030
 ### Data Mining
@@ -7,7 +7,7 @@
 
 import sys
 
-#from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QComboBox, QLabel, QGridLayout, QCheckBox, QGroupBox
+# from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QComboBox, QLabel, QGridLayout, QCheckBox, QGroupBox
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QWidget, QPushButton, QAction, QComboBox, QLabel,
                              QGridLayout, QCheckBox, QGroupBox, QVBoxLayout, QHBoxLayout, QLineEdit, QPlainTextEdit)
 
@@ -16,10 +16,8 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import Qt
 
-
 from scipy import interp
 from itertools import cycle
-
 
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QSizePolicy, QMessageBox
 
@@ -47,10 +45,11 @@ from sklearn.tree import export_graphviz
 import webbrowser
 
 import warnings
+
 warnings.filterwarnings("ignore")
 import matplotlib.pyplot as plt
 
-#KNN libraries
+# KNN libraries
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
@@ -63,16 +62,17 @@ from sklearn.metrics import classification_report
 import random
 import seaborn as sns
 
-#%%-----------------------------------------------------------------------
+# %%-----------------------------------------------------------------------
 import os
-os.environ["PATH"] += os.pathsep + 'C:\\Program Files (x86)\\graphviz-2.38\\release\\bin'
-#%%-----------------------------------------------------------------------
 
+os.environ["PATH"] += os.pathsep + 'C:\\Program Files (x86)\\graphviz-2.38\\release\\bin'
+# %%-----------------------------------------------------------------------
 
 #::--------------------------------
 # Deafault font size for all the windows
 #::--------------------------------
 font_size_window = 'font-size:15px'
+
 
 class RandomForest95(QMainWindow):
     #::--------------------------------------------------------------------------------
@@ -103,23 +103,22 @@ class RandomForest95(QMainWindow):
         self.layout = QGridLayout(self.main_widget)
 
         self.groupBox1 = QGroupBox('Random Forest Features')
-        self.groupBox1Layout= QGridLayout()   # Grid
+        self.groupBox1Layout = QGridLayout()  # Grid
         self.groupBox1.setLayout(self.groupBox1Layout)
 
         # We create a checkbox of each Features
-        self.feature0 = QCheckBox(features_list[0],self)
-        self.feature1 = QCheckBox(features_list[1],self)
+        self.feature0 = QCheckBox(features_list[0], self)
+        self.feature1 = QCheckBox(features_list[1], self)
         self.feature2 = QCheckBox(features_list[2], self)
         self.feature3 = QCheckBox(features_list[3], self)
-        self.feature4 = QCheckBox(features_list[4],self)
-        self.feature5 = QCheckBox(features_list[5],self)
+        self.feature4 = QCheckBox(features_list[4], self)
+        self.feature5 = QCheckBox(features_list[5], self)
         self.feature0.setChecked(True)
         self.feature1.setChecked(True)
         self.feature2.setChecked(True)
         self.feature3.setChecked(True)
         self.feature4.setChecked(True)
         self.feature5.setChecked(True)
-
 
         self.lblPercentTest = QLabel('Percentage for Test :')
         self.lblPercentTest.adjustSize()
@@ -130,16 +129,16 @@ class RandomForest95(QMainWindow):
         self.btnExecute = QPushButton("Execute RF")
         self.btnExecute.clicked.connect(self.update)
 
-        self.groupBox1Layout.addWidget(self.feature0,0,0)
-        self.groupBox1Layout.addWidget(self.feature1,0,1)
-        self.groupBox1Layout.addWidget(self.feature2,1,0)
-        self.groupBox1Layout.addWidget(self.feature3,1,1)
-        self.groupBox1Layout.addWidget(self.feature4,2,0)
-        self.groupBox1Layout.addWidget(self.feature5,2,1)
+        self.groupBox1Layout.addWidget(self.feature0, 0, 0)
+        self.groupBox1Layout.addWidget(self.feature1, 0, 1)
+        self.groupBox1Layout.addWidget(self.feature2, 1, 0)
+        self.groupBox1Layout.addWidget(self.feature3, 1, 1)
+        self.groupBox1Layout.addWidget(self.feature4, 2, 0)
+        self.groupBox1Layout.addWidget(self.feature5, 2, 1)
 
-        self.groupBox1Layout.addWidget(self.lblPercentTest,4,0)
-        self.groupBox1Layout.addWidget(self.txtPercentTest,4,1)
-        self.groupBox1Layout.addWidget(self.btnExecute,5,0)
+        self.groupBox1Layout.addWidget(self.lblPercentTest, 4, 0)
+        self.groupBox1Layout.addWidget(self.txtPercentTest, 4, 1)
+        self.groupBox1Layout.addWidget(self.btnExecute, 5, 0)
 
         self.groupBox2 = QGroupBox('Results from the model')
         self.groupBox2Layout = QVBoxLayout()
@@ -162,7 +161,7 @@ class RandomForest95(QMainWindow):
 
         self.fig = Figure()
         self.ax1 = self.fig.add_subplot(111)
-        self.axes=[self.ax1]
+        self.axes = [self.ax1]
         self.canvas = FigureCanvas(self.fig)
 
         self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -170,7 +169,7 @@ class RandomForest95(QMainWindow):
         self.canvas.updateGeometry()
 
         self.groupBoxG1 = QGroupBox('Confusion Matrix')
-        self.groupBoxG1Layout= QVBoxLayout()
+        self.groupBoxG1Layout = QVBoxLayout()
         self.groupBoxG1.setLayout(self.groupBoxG1Layout)
 
         self.groupBoxG1Layout.addWidget(self.canvas)
@@ -197,10 +196,10 @@ class RandomForest95(QMainWindow):
         # End of graphs
         #::-------------------------------------------------
 
-        self.layout.addWidget(self.groupBox1,0,0)
-        self.layout.addWidget(self.groupBoxG1,0,1)
-        self.layout.addWidget(self.groupBox2,1,0)
-        self.layout.addWidget(self.groupBoxG3,0,2)
+        self.layout.addWidget(self.groupBox1, 0, 0)
+        self.layout.addWidget(self.groupBoxG1, 0, 1)
+        self.layout.addWidget(self.groupBox2, 1, 0)
+        self.layout.addWidget(self.groupBoxG3, 0, 2)
 
         self.setCentralWidget(self.main_widget)
         self.resize(1100, 700)
@@ -208,15 +207,15 @@ class RandomForest95(QMainWindow):
 
     def update(self):
         #::-------------------------------------------------
-        #Random Forest Classifier
-        #We populate the dashboard using the parametres chosen by the user
+        # Random Forest Classifier
+        # We populate the dashboard using the parametres chosen by the user
         #::-------------------------------------------------
 
         # processing the parameters
 
         self.list_corr_features = pd.DataFrame([])
         if self.feature0.isChecked():
-            if len(self.list_corr_features)==0:
+            if len(self.list_corr_features) == 0:
                 self.list_corr_features = mmr[features_list[0]]
             else:
                 self.list_corr_features = pd.concat([self.list_corr_features, mmr[features_list[0]]], axis=1)
@@ -277,7 +276,7 @@ class RandomForest95(QMainWindow):
 
         X_train, X_test, y_train, y_test = train_test_split(X_dt, y_dt, test_size=vtest_per, random_state=100)
 
-        #specify random forest classifier
+        # specify random forest classifier
         self.clf_rf = RandomForestClassifier(n_estimators=100, random_state=100)
 
         # perform training
@@ -304,11 +303,11 @@ class RandomForest95(QMainWindow):
         ##  Ghaph1 :
         ##  Confusion Matrix
         #::------------------------------------
-        class_names1 = ['','under_95', 'at_least_95']
+        class_names1 = ['', 'under_95', 'at_least_95']
 
-        self.ax1.matshow(conf_matrix, cmap= plt.cm.get_cmap('Blues', 14))
+        self.ax1.matshow(conf_matrix, cmap=plt.cm.get_cmap('Blues', 14))
         self.ax1.set_yticklabels(class_names1)
-        self.ax1.set_xticklabels(class_names1,rotation = 90)
+        self.ax1.set_xticklabels(class_names1, rotation=90)
         self.ax1.set_xlabel('Predicted label')
         self.ax1.set_ylabel('True label')
 
@@ -337,12 +336,13 @@ class RandomForest95(QMainWindow):
         X_Features = f_importances.index
         y_Importance = list(f_importances)
 
-        self.ax3.barh(X_Features, y_Importance )
+        self.ax3.barh(X_Features, y_Importance)
         self.ax3.set_aspect('auto')
 
         # show the plot
         self.fig3.tight_layout()
         self.fig3.canvas.draw_idle()
+
 
 class RandomForest90(QMainWindow):
     #::--------------------------------------------------------------------------------
@@ -373,23 +373,22 @@ class RandomForest90(QMainWindow):
         self.layout = QGridLayout(self.main_widget)
 
         self.groupBox1 = QGroupBox('Random Forest Features')
-        self.groupBox1Layout= QGridLayout()   # Grid
+        self.groupBox1Layout = QGridLayout()  # Grid
         self.groupBox1.setLayout(self.groupBox1Layout)
 
         # We create a checkbox of each Features
-        self.feature0 = QCheckBox(features_list[0],self)
-        self.feature1 = QCheckBox(features_list[1],self)
+        self.feature0 = QCheckBox(features_list[0], self)
+        self.feature1 = QCheckBox(features_list[1], self)
         self.feature2 = QCheckBox(features_list[2], self)
         self.feature3 = QCheckBox(features_list[3], self)
-        self.feature4 = QCheckBox(features_list[4],self)
-        self.feature5 = QCheckBox(features_list[5],self)
+        self.feature4 = QCheckBox(features_list[4], self)
+        self.feature5 = QCheckBox(features_list[5], self)
         self.feature0.setChecked(True)
         self.feature1.setChecked(True)
         self.feature2.setChecked(True)
         self.feature3.setChecked(True)
         self.feature4.setChecked(True)
         self.feature5.setChecked(True)
-
 
         self.lblPercentTest = QLabel('Percentage for Test :')
         self.lblPercentTest.adjustSize()
@@ -400,16 +399,16 @@ class RandomForest90(QMainWindow):
         self.btnExecute = QPushButton("Execute RF")
         self.btnExecute.clicked.connect(self.update)
 
-        self.groupBox1Layout.addWidget(self.feature0,0,0)
-        self.groupBox1Layout.addWidget(self.feature1,0,1)
-        self.groupBox1Layout.addWidget(self.feature2,1,0)
-        self.groupBox1Layout.addWidget(self.feature3,1,1)
-        self.groupBox1Layout.addWidget(self.feature4,2,0)
-        self.groupBox1Layout.addWidget(self.feature5,2,1)
+        self.groupBox1Layout.addWidget(self.feature0, 0, 0)
+        self.groupBox1Layout.addWidget(self.feature1, 0, 1)
+        self.groupBox1Layout.addWidget(self.feature2, 1, 0)
+        self.groupBox1Layout.addWidget(self.feature3, 1, 1)
+        self.groupBox1Layout.addWidget(self.feature4, 2, 0)
+        self.groupBox1Layout.addWidget(self.feature5, 2, 1)
 
-        self.groupBox1Layout.addWidget(self.lblPercentTest,4,0)
-        self.groupBox1Layout.addWidget(self.txtPercentTest,4,1)
-        self.groupBox1Layout.addWidget(self.btnExecute,5,0)
+        self.groupBox1Layout.addWidget(self.lblPercentTest, 4, 0)
+        self.groupBox1Layout.addWidget(self.txtPercentTest, 4, 1)
+        self.groupBox1Layout.addWidget(self.btnExecute, 5, 0)
 
         self.groupBox2 = QGroupBox('Results from the model')
         self.groupBox2Layout = QVBoxLayout()
@@ -432,7 +431,7 @@ class RandomForest90(QMainWindow):
 
         self.fig = Figure()
         self.ax1 = self.fig.add_subplot(111)
-        self.axes=[self.ax1]
+        self.axes = [self.ax1]
         self.canvas = FigureCanvas(self.fig)
 
         self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -440,7 +439,7 @@ class RandomForest90(QMainWindow):
         self.canvas.updateGeometry()
 
         self.groupBoxG1 = QGroupBox('Confusion Matrix')
-        self.groupBoxG1Layout= QVBoxLayout()
+        self.groupBoxG1Layout = QVBoxLayout()
         self.groupBoxG1.setLayout(self.groupBoxG1Layout)
 
         self.groupBoxG1Layout.addWidget(self.canvas)
@@ -467,10 +466,10 @@ class RandomForest90(QMainWindow):
         # End of graphs
         #::-------------------------------------------------
 
-        self.layout.addWidget(self.groupBox1,0,0)
-        self.layout.addWidget(self.groupBoxG1,0,1)
-        self.layout.addWidget(self.groupBox2,1,0)
-        self.layout.addWidget(self.groupBoxG3,0,2)
+        self.layout.addWidget(self.groupBox1, 0, 0)
+        self.layout.addWidget(self.groupBoxG1, 0, 1)
+        self.layout.addWidget(self.groupBox2, 1, 0)
+        self.layout.addWidget(self.groupBoxG3, 0, 2)
 
         self.setCentralWidget(self.main_widget)
         self.resize(1100, 700)
@@ -478,15 +477,15 @@ class RandomForest90(QMainWindow):
 
     def update(self):
         #::-------------------------------------------------
-        #Random Forest Classifier
-        #We populate the dashboard using the parametres chosen by the user
+        # Random Forest Classifier
+        # We populate the dashboard using the parametres chosen by the user
         #::-------------------------------------------------
 
         # processing the parameters
 
         self.list_corr_features = pd.DataFrame([])
         if self.feature0.isChecked():
-            if len(self.list_corr_features)==0:
+            if len(self.list_corr_features) == 0:
                 self.list_corr_features = mmr[features_list[0]]
             else:
                 self.list_corr_features = pd.concat([self.list_corr_features, mmr[features_list[0]]], axis=1)
@@ -547,7 +546,7 @@ class RandomForest90(QMainWindow):
 
         X_train, X_test, y_train, y_test = train_test_split(X_dt, y_dt, test_size=vtest_per, random_state=100)
 
-        #specify random forest classifier
+        # specify random forest classifier
         self.clf_rf = RandomForestClassifier(n_estimators=100, random_state=100)
 
         # perform training
@@ -574,11 +573,11 @@ class RandomForest90(QMainWindow):
         ##  Ghaph1 :
         ##  Confusion Matrix
         #::------------------------------------
-        class_names1 = ['','under_90', 'at_least_90']
+        class_names1 = ['', 'under_90', 'at_least_90']
 
-        self.ax1.matshow(conf_matrix, cmap= plt.cm.get_cmap('Blues', 14))
+        self.ax1.matshow(conf_matrix, cmap=plt.cm.get_cmap('Blues', 14))
         self.ax1.set_yticklabels(class_names1)
-        self.ax1.set_xticklabels(class_names1,rotation = 90)
+        self.ax1.set_xticklabels(class_names1, rotation=90)
         self.ax1.set_xlabel('Predicted label')
         self.ax1.set_ylabel('True label')
 
@@ -607,12 +606,13 @@ class RandomForest90(QMainWindow):
         X_Features = f_importances.index
         y_Importance = list(f_importances)
 
-        self.ax3.barh(X_Features, y_Importance )
+        self.ax3.barh(X_Features, y_Importance)
         self.ax3.set_aspect('auto')
 
         # show the plot
         self.fig3.tight_layout()
         self.fig3.canvas.draw_idle()
+
 
 class DecisionTree95(QMainWindow):
     #::----------------------
@@ -630,7 +630,7 @@ class DecisionTree95(QMainWindow):
     def __init__(self):
         super(DecisionTree95, self).__init__()
 
-        self.Title ="Decision Tree Classifier MMR >= 95"
+        self.Title = "Decision Tree Classifier MMR >= 95"
         self.initUi()
 
     def initUi(self):
@@ -646,15 +646,15 @@ class DecisionTree95(QMainWindow):
         self.layout = QGridLayout(self.main_widget)
 
         self.groupBox1 = QGroupBox('ML Decision Tree Features')
-        self.groupBox1Layout= QGridLayout()
+        self.groupBox1Layout = QGridLayout()
         self.groupBox1.setLayout(self.groupBox1Layout)
 
-        self.feature0 = QCheckBox(features_list[0],self)
-        self.feature1 = QCheckBox(features_list[1],self)
+        self.feature0 = QCheckBox(features_list[0], self)
+        self.feature1 = QCheckBox(features_list[1], self)
         self.feature2 = QCheckBox(features_list[2], self)
         self.feature3 = QCheckBox(features_list[3], self)
-        self.feature4 = QCheckBox(features_list[4],self)
-        self.feature5 = QCheckBox(features_list[5],self)
+        self.feature4 = QCheckBox(features_list[4], self)
+        self.feature5 = QCheckBox(features_list[5], self)
 
         self.feature0.setChecked(True)
         self.feature1.setChecked(True)
@@ -662,7 +662,6 @@ class DecisionTree95(QMainWindow):
         self.feature3.setChecked(True)
         self.feature4.setChecked(True)
         self.feature5.setChecked(True)
-
 
         self.lblPercentTest = QLabel('Percentage for Test :')
         self.lblPercentTest.adjustSize()
@@ -682,19 +681,19 @@ class DecisionTree95(QMainWindow):
 
         # We create a checkbox for each feature
 
-        self.groupBox1Layout.addWidget(self.feature0,0,0)
-        self.groupBox1Layout.addWidget(self.feature1,0,1)
-        self.groupBox1Layout.addWidget(self.feature2,1,0)
-        self.groupBox1Layout.addWidget(self.feature3,1,1)
-        self.groupBox1Layout.addWidget(self.feature4,2,0)
-        self.groupBox1Layout.addWidget(self.feature5,2,1)
+        self.groupBox1Layout.addWidget(self.feature0, 0, 0)
+        self.groupBox1Layout.addWidget(self.feature1, 0, 1)
+        self.groupBox1Layout.addWidget(self.feature2, 1, 0)
+        self.groupBox1Layout.addWidget(self.feature3, 1, 1)
+        self.groupBox1Layout.addWidget(self.feature4, 2, 0)
+        self.groupBox1Layout.addWidget(self.feature5, 2, 1)
 
-        self.groupBox1Layout.addWidget(self.lblPercentTest,4,0)
-        self.groupBox1Layout.addWidget(self.txtPercentTest,4,1)
-        self.groupBox1Layout.addWidget(self.lblMaxDepth,5,0)
-        self.groupBox1Layout.addWidget(self.txtMaxDepth,5,1)
-        self.groupBox1Layout.addWidget(self.btnExecute,6,0)
-        self.groupBox1Layout.addWidget(self.btnDTFigure,6,1)
+        self.groupBox1Layout.addWidget(self.lblPercentTest, 4, 0)
+        self.groupBox1Layout.addWidget(self.txtPercentTest, 4, 1)
+        self.groupBox1Layout.addWidget(self.lblMaxDepth, 5, 0)
+        self.groupBox1Layout.addWidget(self.txtMaxDepth, 5, 1)
+        self.groupBox1Layout.addWidget(self.btnExecute, 6, 0)
+        self.groupBox1Layout.addWidget(self.btnDTFigure, 6, 1)
 
         self.groupBox2 = QGroupBox('Results from the model')
         self.groupBox2Layout = QVBoxLayout()
@@ -717,7 +716,7 @@ class DecisionTree95(QMainWindow):
 
         self.fig = Figure()
         self.ax1 = self.fig.add_subplot(111)
-        self.axes=[self.ax1]
+        self.axes = [self.ax1]
         self.canvas = FigureCanvas(self.fig)
 
         self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -725,7 +724,7 @@ class DecisionTree95(QMainWindow):
         self.canvas.updateGeometry()
 
         self.groupBoxG1 = QGroupBox('Confusion Matrix')
-        self.groupBoxG1Layout= QVBoxLayout()
+        self.groupBoxG1Layout = QVBoxLayout()
         self.groupBoxG1.setLayout(self.groupBoxG1Layout)
 
         self.groupBoxG1Layout.addWidget(self.canvas)
@@ -736,26 +735,25 @@ class DecisionTree95(QMainWindow):
 
         ## End of elements of the dashboard
 
-        self.layout.addWidget(self.groupBox1,0,0)
-        self.layout.addWidget(self.groupBoxG1,0,1)
-        self.layout.addWidget(self.groupBox2,0,2)
+        self.layout.addWidget(self.groupBox1, 0, 0)
+        self.layout.addWidget(self.groupBoxG1, 0, 1)
+        self.layout.addWidget(self.groupBox2, 0, 2)
 
         self.setCentralWidget(self.main_widget)
         self.resize(1100, 700)
         self.show()
 
-
     def update(self):
 
         #::-------------------------------------------------
-        #Decision Tree Algorithm
-        #We populate the dashboard using the parametres chosen by the user
+        # Decision Tree Algorithm
+        # We populate the dashboard using the parametres chosen by the user
         #::-------------------------------------------------
 
         # We process the parameters
         self.list_corr_features = pd.DataFrame([])
         if self.feature0.isChecked():
-            if len(self.list_corr_features)==0:
+            if len(self.list_corr_features) == 0:
                 self.list_corr_features = mmr[features_list[0]]
             else:
                 self.list_corr_features = pd.concat([self.list_corr_features, mmr[features_list[0]]], axis=1)
@@ -801,7 +799,7 @@ class DecisionTree95(QMainWindow):
 
         # We assign the values to X and y to run the algorithm
 
-        X_dt =  self.list_corr_features
+        X_dt = self.list_corr_features
         y_dt = mmr["at_least_95"]
 
         class_le = LabelEncoder()
@@ -814,7 +812,8 @@ class DecisionTree95(QMainWindow):
         X_train, X_test, y_train, y_test = train_test_split(X_dt, y_dt, test_size=vtest_per, random_state=100)
         # perform training with entropy.
         # Decision tree with entropy
-        self.clf_entropy = DecisionTreeClassifier(criterion="entropy", random_state=100, max_depth=vmax_depth, min_samples_leaf=5)
+        self.clf_entropy = DecisionTreeClassifier(criterion="entropy", random_state=100, max_depth=vmax_depth,
+                                                  min_samples_leaf=5)
 
         # Performing training
         self.clf_entropy.fit(X_train, y_train)
@@ -843,11 +842,11 @@ class DecisionTree95(QMainWindow):
         self.ax1.set_xlabel('Predicted label')
         self.ax1.set_ylabel('True label')
 
-        class_names1 = ['','under_95', 'at_least_95']
+        class_names1 = ['', 'under_95', 'at_least_95']
 
-        self.ax1.matshow(conf_matrix, cmap= plt.cm.get_cmap('Blues', 14))
+        self.ax1.matshow(conf_matrix, cmap=plt.cm.get_cmap('Blues', 14))
         self.ax1.set_yticklabels(class_names1)
-        self.ax1.set_xticklabels(class_names1,rotation = 90)
+        self.ax1.set_xticklabels(class_names1, rotation=90)
 
         for i in range(len(class_names)):
             for j in range(len(class_names)):
@@ -874,6 +873,7 @@ class DecisionTree95(QMainWindow):
         graph.write_pdf("decision_tree_entropy.pdf")
         webbrowser.open_new(r'decision_tree_entropy.pdf')
 
+
 class DecisionTree90(QMainWindow):
     #::----------------------
     # Implementation of Decision Tree Algorithm >= 90
@@ -890,7 +890,7 @@ class DecisionTree90(QMainWindow):
     def __init__(self):
         super(DecisionTree90, self).__init__()
 
-        self.Title ="Decision Tree Classifier MMR >= 90"
+        self.Title = "Decision Tree Classifier MMR >= 90"
         self.initUi()
 
     def initUi(self):
@@ -906,15 +906,15 @@ class DecisionTree90(QMainWindow):
         self.layout = QGridLayout(self.main_widget)
 
         self.groupBox1 = QGroupBox('ML Decision Tree Features')
-        self.groupBox1Layout= QGridLayout()
+        self.groupBox1Layout = QGridLayout()
         self.groupBox1.setLayout(self.groupBox1Layout)
 
-        self.feature0 = QCheckBox(features_list[0],self)
-        self.feature1 = QCheckBox(features_list[1],self)
+        self.feature0 = QCheckBox(features_list[0], self)
+        self.feature1 = QCheckBox(features_list[1], self)
         self.feature2 = QCheckBox(features_list[2], self)
         self.feature3 = QCheckBox(features_list[3], self)
-        self.feature4 = QCheckBox(features_list[4],self)
-        self.feature5 = QCheckBox(features_list[5],self)
+        self.feature4 = QCheckBox(features_list[4], self)
+        self.feature5 = QCheckBox(features_list[5], self)
 
         self.feature0.setChecked(True)
         self.feature1.setChecked(True)
@@ -922,7 +922,6 @@ class DecisionTree90(QMainWindow):
         self.feature3.setChecked(True)
         self.feature4.setChecked(True)
         self.feature5.setChecked(True)
-
 
         self.lblPercentTest = QLabel('Percentage for Test :')
         self.lblPercentTest.adjustSize()
@@ -942,19 +941,19 @@ class DecisionTree90(QMainWindow):
 
         # We create a checkbox for each feature
 
-        self.groupBox1Layout.addWidget(self.feature0,0,0)
-        self.groupBox1Layout.addWidget(self.feature1,0,1)
-        self.groupBox1Layout.addWidget(self.feature2,1,0)
-        self.groupBox1Layout.addWidget(self.feature3,1,1)
-        self.groupBox1Layout.addWidget(self.feature4,2,0)
-        self.groupBox1Layout.addWidget(self.feature5,2,1)
+        self.groupBox1Layout.addWidget(self.feature0, 0, 0)
+        self.groupBox1Layout.addWidget(self.feature1, 0, 1)
+        self.groupBox1Layout.addWidget(self.feature2, 1, 0)
+        self.groupBox1Layout.addWidget(self.feature3, 1, 1)
+        self.groupBox1Layout.addWidget(self.feature4, 2, 0)
+        self.groupBox1Layout.addWidget(self.feature5, 2, 1)
 
-        self.groupBox1Layout.addWidget(self.lblPercentTest,4,0)
-        self.groupBox1Layout.addWidget(self.txtPercentTest,4,1)
-        self.groupBox1Layout.addWidget(self.lblMaxDepth,5,0)
-        self.groupBox1Layout.addWidget(self.txtMaxDepth,5,1)
-        self.groupBox1Layout.addWidget(self.btnExecute,6,0)
-        self.groupBox1Layout.addWidget(self.btnDTFigure,6,1)
+        self.groupBox1Layout.addWidget(self.lblPercentTest, 4, 0)
+        self.groupBox1Layout.addWidget(self.txtPercentTest, 4, 1)
+        self.groupBox1Layout.addWidget(self.lblMaxDepth, 5, 0)
+        self.groupBox1Layout.addWidget(self.txtMaxDepth, 5, 1)
+        self.groupBox1Layout.addWidget(self.btnExecute, 6, 0)
+        self.groupBox1Layout.addWidget(self.btnDTFigure, 6, 1)
 
         self.groupBox2 = QGroupBox('Results from the model')
         self.groupBox2Layout = QVBoxLayout()
@@ -977,7 +976,7 @@ class DecisionTree90(QMainWindow):
 
         self.fig = Figure()
         self.ax1 = self.fig.add_subplot(111)
-        self.axes=[self.ax1]
+        self.axes = [self.ax1]
         self.canvas = FigureCanvas(self.fig)
 
         self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -985,7 +984,7 @@ class DecisionTree90(QMainWindow):
         self.canvas.updateGeometry()
 
         self.groupBoxG1 = QGroupBox('Confusion Matrix')
-        self.groupBoxG1Layout= QVBoxLayout()
+        self.groupBoxG1Layout = QVBoxLayout()
         self.groupBoxG1.setLayout(self.groupBoxG1Layout)
 
         self.groupBoxG1Layout.addWidget(self.canvas)
@@ -996,26 +995,25 @@ class DecisionTree90(QMainWindow):
 
         ## End of elements of the dashboard
 
-        self.layout.addWidget(self.groupBox1,0,0)
-        self.layout.addWidget(self.groupBoxG1,0,1)
-        self.layout.addWidget(self.groupBox2,0,2)
+        self.layout.addWidget(self.groupBox1, 0, 0)
+        self.layout.addWidget(self.groupBoxG1, 0, 1)
+        self.layout.addWidget(self.groupBox2, 0, 2)
 
         self.setCentralWidget(self.main_widget)
         self.resize(1100, 700)
         self.show()
 
-
     def update(self):
 
         #::-------------------------------------------------
-        #Decision Tree Algorithm
-        #We populate the dashboard using the parametres chosen by the user
+        # Decision Tree Algorithm
+        # We populate the dashboard using the parametres chosen by the user
         #::-------------------------------------------------
 
         # We process the parameters
         self.list_corr_features = pd.DataFrame([])
         if self.feature0.isChecked():
-            if len(self.list_corr_features)==0:
+            if len(self.list_corr_features) == 0:
                 self.list_corr_features = mmr[features_list[0]]
             else:
                 self.list_corr_features = pd.concat([self.list_corr_features, mmr[features_list[0]]], axis=1)
@@ -1061,7 +1059,7 @@ class DecisionTree90(QMainWindow):
 
         # We assign the values to X and y to run the algorithm
 
-        X_dt =  self.list_corr_features
+        X_dt = self.list_corr_features
         y_dt = mmr["at_least_90"]
 
         class_le = LabelEncoder()
@@ -1074,7 +1072,8 @@ class DecisionTree90(QMainWindow):
         X_train, X_test, y_train, y_test = train_test_split(X_dt, y_dt, test_size=vtest_per, random_state=100)
         # perform training with entropy.
         # Decision tree with entropy
-        self.clf_entropy = DecisionTreeClassifier(criterion="entropy", random_state=100, max_depth=vmax_depth, min_samples_leaf=5)
+        self.clf_entropy = DecisionTreeClassifier(criterion="entropy", random_state=100, max_depth=vmax_depth,
+                                                  min_samples_leaf=5)
 
         # Performing training
         self.clf_entropy.fit(X_train, y_train)
@@ -1103,11 +1102,11 @@ class DecisionTree90(QMainWindow):
         self.ax1.set_xlabel('Predicted label')
         self.ax1.set_ylabel('True label')
 
-        class_names1 = ['','under_90', 'at_least_90']
+        class_names1 = ['', 'under_90', 'at_least_90']
 
-        self.ax1.matshow(conf_matrix, cmap= plt.cm.get_cmap('Blues', 14))
+        self.ax1.matshow(conf_matrix, cmap=plt.cm.get_cmap('Blues', 14))
         self.ax1.set_yticklabels(class_names1)
-        self.ax1.set_xticklabels(class_names1,rotation = 90)
+        self.ax1.set_xticklabels(class_names1, rotation=90)
 
         for i in range(len(class_names)):
             for j in range(len(class_names)):
@@ -1151,7 +1150,7 @@ class KNN95(QMainWindow):
     def __init__(self):
         super(KNN95, self).__init__()
 
-        self.Title ="KNN Classifier MMR >= 95"
+        self.Title = "KNN Classifier MMR >= 95"
         self.initUi()
 
     def initUi(self):
@@ -1167,15 +1166,15 @@ class KNN95(QMainWindow):
         self.layout = QGridLayout(self.main_widget)
 
         self.groupBox1 = QGroupBox('ML KNN Features')
-        self.groupBox1Layout= QGridLayout()
+        self.groupBox1Layout = QGridLayout()
         self.groupBox1.setLayout(self.groupBox1Layout)
 
-        self.feature0 = QCheckBox(features_list[0],self)
-        self.feature1 = QCheckBox(features_list[1],self)
+        self.feature0 = QCheckBox(features_list[0], self)
+        self.feature1 = QCheckBox(features_list[1], self)
         self.feature2 = QCheckBox(features_list[2], self)
         self.feature3 = QCheckBox(features_list[3], self)
-        self.feature4 = QCheckBox(features_list[4],self)
-        self.feature5 = QCheckBox(features_list[5],self)
+        self.feature4 = QCheckBox(features_list[4], self)
+        self.feature5 = QCheckBox(features_list[5], self)
 
         self.feature0.setChecked(True)
         self.feature1.setChecked(True)
@@ -1183,7 +1182,6 @@ class KNN95(QMainWindow):
         self.feature3.setChecked(True)
         self.feature4.setChecked(True)
         self.feature5.setChecked(True)
-
 
         self.lblPercentTest = QLabel('Percentage for Test :')
         self.lblPercentTest.adjustSize()
@@ -1200,18 +1198,18 @@ class KNN95(QMainWindow):
 
         # We create a checkbox for each feature
 
-        self.groupBox1Layout.addWidget(self.feature0,0,0)
-        self.groupBox1Layout.addWidget(self.feature1,0,1)
-        self.groupBox1Layout.addWidget(self.feature2,1,0)
-        self.groupBox1Layout.addWidget(self.feature3,1,1)
-        self.groupBox1Layout.addWidget(self.feature4,2,0)
-        self.groupBox1Layout.addWidget(self.feature5,2,1)
+        self.groupBox1Layout.addWidget(self.feature0, 0, 0)
+        self.groupBox1Layout.addWidget(self.feature1, 0, 1)
+        self.groupBox1Layout.addWidget(self.feature2, 1, 0)
+        self.groupBox1Layout.addWidget(self.feature3, 1, 1)
+        self.groupBox1Layout.addWidget(self.feature4, 2, 0)
+        self.groupBox1Layout.addWidget(self.feature5, 2, 1)
 
-        self.groupBox1Layout.addWidget(self.lblPercentTest,4,0)
-        self.groupBox1Layout.addWidget(self.txtPercentTest,4,1)
-        self.groupBox1Layout.addWidget(self.lblMaxDepth,5,0)
-        self.groupBox1Layout.addWidget(self.txtMaxDepth,5,1)
-        self.groupBox1Layout.addWidget(self.btnExecute,6,0)
+        self.groupBox1Layout.addWidget(self.lblPercentTest, 4, 0)
+        self.groupBox1Layout.addWidget(self.txtPercentTest, 4, 1)
+        self.groupBox1Layout.addWidget(self.lblMaxDepth, 5, 0)
+        self.groupBox1Layout.addWidget(self.txtMaxDepth, 5, 1)
+        self.groupBox1Layout.addWidget(self.btnExecute, 6, 0)
 
         self.groupBox2 = QGroupBox('Results from the model')
         self.groupBox2Layout = QVBoxLayout()
@@ -1234,7 +1232,7 @@ class KNN95(QMainWindow):
 
         self.fig = Figure()
         self.ax1 = self.fig.add_subplot(111)
-        self.axes=[self.ax1]
+        self.axes = [self.ax1]
         self.canvas = FigureCanvas(self.fig)
 
         self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -1242,7 +1240,7 @@ class KNN95(QMainWindow):
         self.canvas.updateGeometry()
 
         self.groupBoxG1 = QGroupBox('Confusion Matrix')
-        self.groupBoxG1Layout= QVBoxLayout()
+        self.groupBoxG1Layout = QVBoxLayout()
         self.groupBoxG1.setLayout(self.groupBoxG1Layout)
 
         self.groupBoxG1Layout.addWidget(self.canvas)
@@ -1253,9 +1251,9 @@ class KNN95(QMainWindow):
 
         ## End of elements on the dashboard
 
-        self.layout.addWidget(self.groupBox1,0,0)
-        self.layout.addWidget(self.groupBoxG1,0,1)
-        self.layout.addWidget(self.groupBox2,0,2)
+        self.layout.addWidget(self.groupBox1, 0, 0)
+        self.layout.addWidget(self.groupBoxG1, 0, 1)
+        self.layout.addWidget(self.groupBox2, 0, 2)
 
         self.setCentralWidget(self.main_widget)
         self.resize(1100, 700)
@@ -1263,14 +1261,14 @@ class KNN95(QMainWindow):
 
     def update(self):
         #::--------------------------------------------
-        #KNN Algorithm
-        #We populate the dashboard using the parametres chosen by the user
+        # KNN Algorithm
+        # We populate the dashboard using the parametres chosen by the user
         #::--------------------------------------------
 
         # We process the parameters
         self.list_corr_features = pd.DataFrame([])
         if self.feature0.isChecked():
-            if len(self.list_corr_features)==0:
+            if len(self.list_corr_features) == 0:
                 self.list_corr_features = mmr[features_list[0]]
             else:
                 self.list_corr_features = pd.concat([self.list_corr_features, mmr[features_list[0]]], axis=1)
@@ -1316,7 +1314,7 @@ class KNN95(QMainWindow):
 
         # We assign the values to X and y to run the algorithm
 
-        X_dt =  self.list_corr_features
+        X_dt = self.list_corr_features
         y_dt = mmr["at_least_95"]
 
         class_le = LabelEncoder()
@@ -1325,7 +1323,8 @@ class KNN95(QMainWindow):
         y_dt = class_le.fit_transform(y_dt)
 
         # split the dataset into train and test
-        X_train, X_test, y_train, y_test = train_test_split(X_dt, y_dt, test_size=vtest_per, random_state=100, stratify=y_dt)
+        X_train, X_test, y_train, y_test = train_test_split(X_dt, y_dt, test_size=vtest_per, random_state=100,
+                                                            stratify=y_dt)
 
         # data preprocessing
         # standardize the data
@@ -1340,7 +1339,7 @@ class KNN95(QMainWindow):
         # creating the classifier object
         self.clf = KNeighborsClassifier(n_neighbors=vmax_depth)
 
-        #performing training
+        # performing training
         self.clf.fit(X_train_std, y_train)
 
         # make predictions
@@ -1365,11 +1364,11 @@ class KNN95(QMainWindow):
         self.ax1.set_xlabel('Predicted label')
         self.ax1.set_ylabel('True label')
 
-        class_names1 = ['','under_95', 'at_least_95']
+        class_names1 = ['', 'under_95', 'at_least_95']
 
-        self.ax1.matshow(conf_matrix, cmap= plt.cm.get_cmap('Blues', 14))
+        self.ax1.matshow(conf_matrix, cmap=plt.cm.get_cmap('Blues', 14))
         self.ax1.set_yticklabels(class_names1)
-        self.ax1.set_xticklabels(class_names1,rotation = 90)
+        self.ax1.set_xticklabels(class_names1, rotation=90)
 
         for i in range(len(class_names)):
             for j in range(len(class_names)):
@@ -1382,6 +1381,7 @@ class KNN95(QMainWindow):
         #::-----------------------------------------------------
         # End Graph 1 -- Confusioin Matrix
         #::-----------------------------------------------------
+
 
 class KNN90(QMainWindow):
     #::----------------------
@@ -1399,7 +1399,7 @@ class KNN90(QMainWindow):
     def __init__(self):
         super(KNN90, self).__init__()
 
-        self.Title ="KNN Classifier MMR >= 90"
+        self.Title = "KNN Classifier MMR >= 90"
         self.initUi()
 
     def initUi(self):
@@ -1415,15 +1415,15 @@ class KNN90(QMainWindow):
         self.layout = QGridLayout(self.main_widget)
 
         self.groupBox1 = QGroupBox('ML KNN Features')
-        self.groupBox1Layout= QGridLayout()
+        self.groupBox1Layout = QGridLayout()
         self.groupBox1.setLayout(self.groupBox1Layout)
 
-        self.feature0 = QCheckBox(features_list[0],self)
-        self.feature1 = QCheckBox(features_list[1],self)
+        self.feature0 = QCheckBox(features_list[0], self)
+        self.feature1 = QCheckBox(features_list[1], self)
         self.feature2 = QCheckBox(features_list[2], self)
         self.feature3 = QCheckBox(features_list[3], self)
-        self.feature4 = QCheckBox(features_list[4],self)
-        self.feature5 = QCheckBox(features_list[5],self)
+        self.feature4 = QCheckBox(features_list[4], self)
+        self.feature5 = QCheckBox(features_list[5], self)
 
         self.feature0.setChecked(True)
         self.feature1.setChecked(True)
@@ -1431,7 +1431,6 @@ class KNN90(QMainWindow):
         self.feature3.setChecked(True)
         self.feature4.setChecked(True)
         self.feature5.setChecked(True)
-
 
         self.lblPercentTest = QLabel('Percentage for Test :')
         self.lblPercentTest.adjustSize()
@@ -1448,18 +1447,18 @@ class KNN90(QMainWindow):
 
         # We create a checkbox for each feature
 
-        self.groupBox1Layout.addWidget(self.feature0,0,0)
-        self.groupBox1Layout.addWidget(self.feature1,0,1)
-        self.groupBox1Layout.addWidget(self.feature2,1,0)
-        self.groupBox1Layout.addWidget(self.feature3,1,1)
-        self.groupBox1Layout.addWidget(self.feature4,2,0)
-        self.groupBox1Layout.addWidget(self.feature5,2,1)
+        self.groupBox1Layout.addWidget(self.feature0, 0, 0)
+        self.groupBox1Layout.addWidget(self.feature1, 0, 1)
+        self.groupBox1Layout.addWidget(self.feature2, 1, 0)
+        self.groupBox1Layout.addWidget(self.feature3, 1, 1)
+        self.groupBox1Layout.addWidget(self.feature4, 2, 0)
+        self.groupBox1Layout.addWidget(self.feature5, 2, 1)
 
-        self.groupBox1Layout.addWidget(self.lblPercentTest,4,0)
-        self.groupBox1Layout.addWidget(self.txtPercentTest,4,1)
-        self.groupBox1Layout.addWidget(self.lblMaxDepth,5,0)
-        self.groupBox1Layout.addWidget(self.txtMaxDepth,5,1)
-        self.groupBox1Layout.addWidget(self.btnExecute,6,0)
+        self.groupBox1Layout.addWidget(self.lblPercentTest, 4, 0)
+        self.groupBox1Layout.addWidget(self.txtPercentTest, 4, 1)
+        self.groupBox1Layout.addWidget(self.lblMaxDepth, 5, 0)
+        self.groupBox1Layout.addWidget(self.txtMaxDepth, 5, 1)
+        self.groupBox1Layout.addWidget(self.btnExecute, 6, 0)
 
         self.groupBox2 = QGroupBox('Results from the model')
         self.groupBox2Layout = QVBoxLayout()
@@ -1482,7 +1481,7 @@ class KNN90(QMainWindow):
 
         self.fig = Figure()
         self.ax1 = self.fig.add_subplot(111)
-        self.axes=[self.ax1]
+        self.axes = [self.ax1]
         self.canvas = FigureCanvas(self.fig)
 
         self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -1490,7 +1489,7 @@ class KNN90(QMainWindow):
         self.canvas.updateGeometry()
 
         self.groupBoxG1 = QGroupBox('Confusion Matrix')
-        self.groupBoxG1Layout= QVBoxLayout()
+        self.groupBoxG1Layout = QVBoxLayout()
         self.groupBoxG1.setLayout(self.groupBoxG1Layout)
 
         self.groupBoxG1Layout.addWidget(self.canvas)
@@ -1501,9 +1500,9 @@ class KNN90(QMainWindow):
 
         ## End of elements on the dashboard
 
-        self.layout.addWidget(self.groupBox1,0,0)
-        self.layout.addWidget(self.groupBoxG1,0,1)
-        self.layout.addWidget(self.groupBox2,0,2)
+        self.layout.addWidget(self.groupBox1, 0, 0)
+        self.layout.addWidget(self.groupBoxG1, 0, 1)
+        self.layout.addWidget(self.groupBox2, 0, 2)
 
         self.setCentralWidget(self.main_widget)
         self.resize(1100, 700)
@@ -1511,14 +1510,14 @@ class KNN90(QMainWindow):
 
     def update(self):
         #::--------------------------------------------
-        #KNN Algorithm
-        #We populate the dashboard using the parametres chosen by the user
+        # KNN Algorithm
+        # We populate the dashboard using the parametres chosen by the user
         #::--------------------------------------------
 
         # We process the parameters
         self.list_corr_features = pd.DataFrame([])
         if self.feature0.isChecked():
-            if len(self.list_corr_features)==0:
+            if len(self.list_corr_features) == 0:
                 self.list_corr_features = mmr[features_list[0]]
             else:
                 self.list_corr_features = pd.concat([self.list_corr_features, mmr[features_list[0]]], axis=1)
@@ -1564,7 +1563,7 @@ class KNN90(QMainWindow):
 
         # We assign the values to X and y to run the algorithm
 
-        X_dt =  self.list_corr_features
+        X_dt = self.list_corr_features
         y_dt = mmr["at_least_90"]
 
         class_le = LabelEncoder()
@@ -1573,7 +1572,8 @@ class KNN90(QMainWindow):
         y_dt = class_le.fit_transform(y_dt)
 
         # split the dataset into train and test
-        X_train, X_test, y_train, y_test = train_test_split(X_dt, y_dt, test_size=vtest_per, random_state=100, stratify=y_dt)
+        X_train, X_test, y_train, y_test = train_test_split(X_dt, y_dt, test_size=vtest_per, random_state=100,
+                                                            stratify=y_dt)
 
         # data preprocessing
         # standardize the data
@@ -1588,7 +1588,7 @@ class KNN90(QMainWindow):
         # creating the classifier object
         self.clf = KNeighborsClassifier(n_neighbors=vmax_depth)
 
-        #performing training
+        # performing training
         self.clf.fit(X_train_std, y_train)
 
         # make predictions
@@ -1613,11 +1613,11 @@ class KNN90(QMainWindow):
         self.ax1.set_xlabel('Predicted label')
         self.ax1.set_ylabel('True label')
 
-        class_names1 = ['','under_90', 'at_least_90']
+        class_names1 = ['', 'under_90', 'at_least_90']
 
-        self.ax1.matshow(conf_matrix, cmap= plt.cm.get_cmap('Blues', 14))
+        self.ax1.matshow(conf_matrix, cmap=plt.cm.get_cmap('Blues', 14))
         self.ax1.set_yticklabels(class_names1)
-        self.ax1.set_xticklabels(class_names1,rotation = 90)
+        self.ax1.set_xticklabels(class_names1, rotation=90)
 
         for i in range(len(class_names)):
             for j in range(len(class_names)):
@@ -1661,9 +1661,8 @@ class App(QMainWindow):
         mainMenu.setStyleSheet('background-color: lightblue')
 
         fileMenu = mainMenu.addMenu('File')
-        MLModelsMenu = mainMenu.addMenu('ML Models')
-        RegMenu = mainMenu.addMenu('Regression')
-
+        MLModelsMenu = mainMenu.addMenu('MMR Rate as Target')
+        #RegMenu = mainMenu.addMenu('Regression')
 
         #::--------------------------------------
         # Exit application
@@ -1685,7 +1684,7 @@ class App(QMainWindow):
         #::--------------------------------------------------
         # Decision Tree Model
         #::--------------------------------------------------
-        DT95Button =  QAction(QIcon(), 'Decision Tree 95', self)
+        DT95Button = QAction(QIcon(), 'Decision Tree 95', self)
         DT95Button.setStatusTip('Decision Tree 95')
         DT95Button.triggered.connect(self.MLDT95)
 
@@ -1730,12 +1729,11 @@ class App(QMainWindow):
         #::------------------------------------------------------
         # Regression
         #::------------------------------------------------------
-        Reg1Button = QAction(QIcon(), 'Regression', self)
-        Reg1Button.setStatusTip('Regression')
-        Reg1Button.triggered.connect(self.MLDT95)
+        #Reg1Button = QAction(QIcon(), 'Regression', self)
+        #Reg1Button.setStatusTip('Regression')
+        #Reg1Button.triggered.connect(self.MLDT95)
 
-        RegMenu.addAction(Reg1Button)
-
+        #RegMenu.addAction(Reg1Button)
 
     def MLDT95(self):
         #::-----------------------------------------------------------
@@ -1791,6 +1789,7 @@ class App(QMainWindow):
         self.dialogs.append(dialog)
         dialog.show()
 
+
 def main():
     #::-------------------------------------------------
     # Initiates the application
@@ -1812,9 +1811,8 @@ def data_mmr():
     global class_names
     mmr = pd.read_csv('m_tree.csv')
     features_list = ["state_mean", "city_mean", "county_mean", "type_of_school",
-         "enroll", "xtotal"]
+                     "enroll", "xtotal"]
     class_names = ['under_95', 'at_least_95']
-
 
 
 if __name__ == '__main__':
