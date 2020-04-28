@@ -1816,6 +1816,7 @@ def data_mmr():
     class_names = ['under_95', 'at_least_95']
 
 
+
 if __name__ == '__main__':
     #::------------------------------------
     # First reads the data then calls for the application
