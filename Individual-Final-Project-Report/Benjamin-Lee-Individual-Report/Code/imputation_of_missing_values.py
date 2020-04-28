@@ -24,7 +24,7 @@ pd.set_option('display.max_columns', 10)
 # Pre-processing
 # ----------------------------------------------------------------------------------------------------------------------
 # Reading in the data as 'measles'
-measles = pd.read_csv('all-measles-rates.csv')
+measles = pd.read_csv('./imputed_files/all-measles-rates.csv')
 
 # Dropping the irrelevant features and replacing placeholder NaN values (-1's) with NaN
 measles = measles.drop(labels=['index', 'year', 'district'], axis=1)
@@ -104,7 +104,7 @@ imp_xrel()
 
 measles = measles.to_csv('./imputed_files/measles_imputed_step1.csv')
 
-measles_imputed_step1 = pd.read_csv('measles_imputed_step1.csv', index_col=0)
+measles_imputed_step1 = pd.read_csv('./imputed_files/measles_imputed_step1.csv', index_col=0)
 
 measles_imputed_step1_means = measles_imputed_step1.mean()
 measles_imputed_step1_means = measles_imputed_step1_means.round(decimals=2)

@@ -54,7 +54,11 @@ using GridSearchCV and cross-validation scores, prove that k = 3 is likely the
 best choice of k.
 
 The imputed_files and mapping_files contain files necessary to run the 
-aforementionedfiles. 
+aforementioned files. 
+
+- all-measles-rates.py
+
+This file contains the original, raw data set used for this project.
 
 - measles_imputed_step1.py
 
