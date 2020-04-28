@@ -2037,7 +2037,7 @@ class App(QMainWindow):
         # the menu, File, EDA Analysis and ML Models
         # ------------------------------------------
         main_menu = self.menuBar()
-        main_menu.setStyleSheet("background-color: lightblue")
+        main_menu.setStyleSheet("background-color: pink")
 
         file_menu = main_menu.addMenu("File")
         vis_menu = main_menu.addMenu("Visualization")
